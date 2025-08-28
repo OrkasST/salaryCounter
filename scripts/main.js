@@ -260,6 +260,6 @@ class App {
         data = JSON.stringify(data)
 
         localStorage.clear()
-        // localStorage.setItem("data", data)
+        localStorage.setItem("data", data)
     }
 }
