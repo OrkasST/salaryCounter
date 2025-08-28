@@ -174,6 +174,9 @@ class App {
         
         this.data.procedures.push([date, log])
 
+        this.procedureCount++
+        this.updateProcedureCountUI()
+
         this.addSalary(procedure)
     }
 
