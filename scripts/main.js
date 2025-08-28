@@ -228,12 +228,13 @@ class App {
 
     removeFulfilledProcedure(ind) {
         let log = this.data.procedures.splice(ind,1)[0]
-        this.save()
         this.showFulfilled()
         this.updateProcedureCountUI()
         let parsedLog = this.parseLog(log)
         this.addSalary('', log[0], -parsedLog.income)
         this.updateSalaryUI(log[0].month)
+        
+        this.save()
     }
 
     updateSalaryPeriodUI() {
