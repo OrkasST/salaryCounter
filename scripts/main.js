@@ -371,7 +371,25 @@ class App {
                 if (isPressed) this.clearStorage()
             }, 3000)
         })
+        button.addEventListener('touchstart', ()=>{
+            isPressed = true
+            console.log("MouseDown")
+            this.clearMemoryBtn.disabled = true
+            clearTimeout(timer)
+            setTimeout(() => {
+                console.log("Time");
+                if (isPressed) this.clearStorage()
+            }, 3000)
+        })
+
+
         button.addEventListener('mouseup', ()=>{
+            isPressed = false
+            console.log("MouseUp")
+            this.clearMemoryBtn.disabled = false
+            timer = this.removeChild(button, this.changeForm)
+        })
+        button.addEventListener('touchend', ()=>{
             isPressed = false
             console.log("MouseUp")
             this.clearMemoryBtn.disabled = false
