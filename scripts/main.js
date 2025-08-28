@@ -405,7 +405,7 @@ class App {
     }
 
     clearStorage() {
-        console.log("Memory cleared");
+        alert("Memory cleared");
         localStorage.clear()
     }
 }
