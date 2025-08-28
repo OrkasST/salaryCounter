@@ -12,6 +12,7 @@ class App {
         this.changeCostBtn = document.getElementById("changeCost")
         this.finishEditingBtn = document.getElementById("finishEditing")
         this.cancelEditingBtn = document.getElementById("cancelEditing")
+        this.clearMemoryBtn = document.getElementById("clearMemory")
 
         this.procedureForm = document.getElementById("addingProcedureForm")
         this.procedureList = document.getElementById("procedure")
@@ -302,6 +303,7 @@ class App {
 
         localStorage.clear()
         localStorage.setItem("data", data)
+        console.log("Data saved");
     }
 
     startCostEditing() {
@@ -330,6 +332,8 @@ class App {
             }
         }
         this.changeForm.classList.remove("disabled")
+
+        this.clearMemoryBtn.addEventListener("click", this.startReleasingMemory.bind(this))
     }
     finishCostEditing() {
         for (let i in this.data._cost) {
@@ -349,5 +353,41 @@ class App {
         this.changeForm.classList.add("disabled")
         this.addProcedureBtn.disabled = false
         this.changeCostBtn.disabled = false
+        this.clearMemoryBtn.removeEventListener("click", this.startReleasingMemory.bind(this))
+    }
+
+    startReleasingMemory() {
+        let button = document.createElement("button")
+        button.innerText = "Очистить"
+        let isPressed = false
+        let timer = null
+        button.addEventListener('mousedown', ()=>{
+            isPressed = true
+            console.log("MouseDown")
+            this.clearMemoryBtn.disabled = true
+            clearTimeout(timer)
+            setTimeout(() => {
+                console.log("Time");
+                if (isPressed) this.clearStorage()
+            }, 3000)
+        })
+        button.addEventListener('mouseup', ()=>{
+            isPressed = false
+            console.log("MouseUp")
+            this.clearMemoryBtn.disabled = false
+            timer = this.removeChild(button, this.changeForm)
+        })
+        this.changeForm.appendChild(button)
+        
+        if (!isPressed) timer = this.removeChild(button, this.changeForm)
+    }
+
+    removeChild(child, parent, time = 2000) {
+        return setTimeout(() => parent.removeChild(child), time)
+    }
+
+    clearStorage() {
+        console.log("Memory cleared");
+        localStorage.clear()
     }
 }
