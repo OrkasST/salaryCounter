@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Count</title>
+    <link rel="icon" href="media/icons/coins.png" sizes="64x64" type="image/png">
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+    <input type="date" id="calendar">
+
+    <div>Зарплата за текущий месяц (<span id="month"></span>): <span id="slaryCount">0</span> BYN</div>
+    <div>Зарплата за текущий период (<span id="slaryPeriod"></span>): <span id="slaryPeriodCount">0</span> BYN</div>
+    <div>Сеансов за <span id="countFilter"></span>: <span id="proceduresCount">0</span></div>
+    <div>
+        Показывать за: 
+        <select name="filter" id="filter">
+            <option value="год">год</option>
+            <option value="месяц">месяц</option>
+            <option value="период">период</option>
+            <option value="день">день</option>
+            <option value="все время">все время</option>
+        </select>
+    </div>
+    <button id="addProcedure">Add procedure</button>
+    
+    <div id="addingProcedureForm" class="disabled">
+        <label for="procedure">Выбери процедуру:</label>
+
+        <select name="procedure" id="procedure">
+            <optgroup label="== СПА ==">
+                <option value="spa30">СПА 30</option>
+                <option value="spa60">СПА 60</option>
+                <option value="spa90">СПА 90</option>
+            </optgroup>
+            <optgroup label="== Стоун ==">
+                <option value="stone60">Стоун 60</option>
+                <option value="stone90">Стоун 90</option>
+            </optgroup>
+            <optgroup label="== Релакс ==">
+                <option value="relax60">Релакс 60</option>
+                <option value="relax90">Релакс 90</option>
+            </optgroup>
+                <option value="full">Полный (Стоун 60 + СПА 60)</option>
+        </select>
+        <button id="finishAdding">Подтвердить</button>
+    </div>
+
+    <div id="fulfilled">
+        
+    </div>
+</body>
+<script src="./scripts/main.js"></script>
+</html>
