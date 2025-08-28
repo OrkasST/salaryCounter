@@ -308,6 +308,7 @@ class App {
                 this.data._cost[i] = this._tempCosts[i]
             }
         }
+        this.save()
         this.closeEditingForm()
     }
     cancelCostEditing() {
