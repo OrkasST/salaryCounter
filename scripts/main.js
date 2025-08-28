@@ -9,8 +9,16 @@ class App {
         this.addProcedureBtn = document.getElementById("addProcedure")
         this.procedureAcceptBtn = document.getElementById("finishAdding")
 
+        this.changeCostBtn = document.getElementById("changeCost")
+        this.finishEditingBtn = document.getElementById("finishEditing")
+        this.cancelEditingBtn = document.getElementById("cancelEditing")
+
         this.procedureForm = document.getElementById("addingProcedureForm")
         this.procedureList = document.getElementById("procedure")
+
+        this.changeForm = document.getElementById("changeForm")
+        this.costFields = document.getElementById("costFields")
+
         this.fulfilledProcedures = document.getElementById("fulfilled")
         this.calendar = document.getElementById("calendar")
         this.monthUI = document.getElementById("month")
@@ -89,6 +97,10 @@ class App {
 
         this.addProcedureBtn.addEventListener("click", this.addProcedureStart.bind(this))
         this.procedureAcceptBtn.addEventListener("click", this.addProcedureFinish.bind(this))
+
+        this.changeCostBtn.addEventListener("click", this.startCostEditing.bind(this))
+        this.finishEditingBtn.addEventListener("click", this.finishCostEditing.bind(this))
+        this.cancelEditingBtn.addEventListener("click", this.cancelCostEditing.bind(this))
         
         this.calendar.addEventListener("input", this.updateDate.bind(this))
         this.filter.addEventListener("input", this.onFilterUpdate.bind(this))
@@ -261,5 +273,51 @@ class App {
 
         localStorage.clear()
         localStorage.setItem("data", data)
+    }
+
+    startCostEditing() {
+        this.addProcedureBtn.disabled = true
+        this.changeCostBtn.disabled = true
+        this.procedureForm.classList.add("disabled")
+
+        this._tempCosts = {}
+
+        for (let i in this.data._cost) {
+            if (this.data._cost.hasOwnProperty(i)) {
+                let div = document.createElement("div")
+                let label = document.createElement("label")
+                let field = document.createElement("input")
+                field.type = "text"
+                field.id = i
+                field.value = this.data._cost[i]
+                field.addEventListener("input", () => { this._tempCosts[i] = field.value })
+                label.innerText = (this.data._proceduresAlphabet[i] || "Процент") + ": "
+                label.for = i
+
+                this._tempCosts[i] = this.data._cost[i]
+
+                div.append(label, field)
+                this.costFields.append(div)
+            }
+        }
+        this.changeForm.classList.remove("disabled")
+    }
+    finishCostEditing() {
+        for (let i in this.data._cost) {
+            if (this.data._cost.hasOwnProperty(i)) {
+                this.data._cost[i] = this._tempCosts[i]
+            }
+        }
+        this.closeEditingForm()
+    }
+    cancelCostEditing() {
+        this._tempCosts = {}
+        this.closeEditingForm()
+    }
+    closeEditingForm() {
+        this.costFields.innerHTML = ''
+        this.changeForm.classList.add("disabled")
+        this.addProcedureBtn.disabled = false
+        this.changeCostBtn.disabled = false
     }
 }
