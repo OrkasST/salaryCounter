@@ -107,7 +107,7 @@ class App {
     }
 
     updateProcedureCountUI() {
-        this.procedureCounterUI.innerText = this.data.procedures.length
+        this.procedureCounterUI.innerText = this.procedureCount
     }
     updateSalaryUI(month) {
         this.salaryCounterUI.innerText = this.data.salary[month] ? this.data.salary[month][0] + this.data.salary[month][1] : "0"
@@ -126,6 +126,7 @@ class App {
         this.updatePeriod()
         this.updateSalaryUI(this.today.month)
         this.updateMonthUI()
+        this.updateProcedureCountUI()
     }
     updatePeriod() {
         this.slaryPeriod.innerText = this.today.day > 15 ? "16-31" : "1-15"
@@ -133,6 +134,7 @@ class App {
     onFilterUpdate() {
         this.showFulfilled()
         this.updateCountFilter()
+        this.updateProcedureCountUI()
     }
     updateMonthUI() {
         this.monthUI.innerText = this.today.month < 10 ? "0" + this.today.month : this.today.month
@@ -225,6 +227,7 @@ class App {
         let log = this.data.procedures.splice(ind,1)[0]
         this.save()
         this.showFulfilled()
+        this.updateProcedureCountUI()
         let parsedLog = this.parseLog(log)
         this.addSalary('', log[0], -parsedLog.income)
         this.updateSalaryUI(log[0].month)
@@ -238,6 +241,7 @@ class App {
 
     showFulfilled() {
         this.fulfilledProcedures.innerHTML = ''
+        this.procedureCount = 0
         for (let i = 0; i < this.data.procedures.length; i++) {
             if (this.applyFilter(this.data.procedures[i][0])) {
                 this.writeProcedure(this.data.procedures[i], i)
