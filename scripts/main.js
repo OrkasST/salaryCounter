@@ -212,8 +212,27 @@ class App {
 
     createProcedureField(date, parsedLog, logInd) {
         let removeBtn = document.createElement("button")
-        removeBtn.addEventListener("click", () => this.removeFulfilledProcedure(logInd))
         removeBtn.innerText = "Удалить"
+
+        let proveBtn = document.createElement("button")
+        proveBtn.classList.add("disabled")
+        proveBtn.innerText = "Подтвердить"
+
+        let cancelBtn = document.createElement("button")
+        cancelBtn.classList.add("disabled")
+        cancelBtn.innerText = "Отменить"
+
+        removeBtn.addEventListener("click", () => {
+            removeBtn.disabled = true
+            proveBtn.classList.remove("disabled")
+            cancelBtn.classList.remove("disabled")
+        })
+        proveBtn.addEventListener("click", () => this.removeFulfilledProcedure(logInd))
+        cancelBtn.addEventListener("click", () => {
+            removeBtn.disabled = false
+            proveBtn.classList.add("disabled")
+            cancelBtn.classList.add("disabled")
+        })
         let procedureLogField = document.createElement("div")
         procedureLogField.innerHTML = `<hr>
             <div id="date">${date.full}</div>
@@ -222,6 +241,8 @@ class App {
             <div id="percent">Процент: ${parsedLog.percent}%</div>
             <div id="income">Доход: ${parsedLog.income} BYN</div>`
         procedureLogField.appendChild(removeBtn)
+        procedureLogField.appendChild(proveBtn)
+        procedureLogField.appendChild(cancelBtn)
 
         return procedureLogField
     }
@@ -233,7 +254,7 @@ class App {
         let parsedLog = this.parseLog(log)
         this.addSalary('', log[0], -parsedLog.income)
         this.updateSalaryUI(log[0].month)
-        
+
         this.save()
     }
 
