@@ -106,8 +106,10 @@ class App {
             let data = JSON.parse( localStorage.data );
 
             if (!data._proceduresAlphabet.hasOwnProperty(data.procedures[0][1].split("_")[0])) {
+                console.log('data.procedures[0][1].split("_")[0]: ', data.procedures[0][1].split("_")[0]);
                 for (let i = 0; i < data.procedures.length; i++) {
                     let log = data.procedures[0][1].split("_")
+                    console.log('log: ', log);
                     log[0] = this.data._proceduresAlphabetReverse[log[0]]
                     console.log('log[0]: ', log[0]);
                 }
