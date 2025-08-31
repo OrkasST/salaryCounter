@@ -104,6 +104,7 @@ class App {
 
         if (localStorage.data) {
             let data = JSON.parse( localStorage.data );
+            console.log('data: ', data);
 
             if (!data._proceduresAlphabet.hasOwnProperty(data.procedures[0][1].split("_")[0])) {
                 console.log('data.procedures[0][1].split("_")[0]: ', data.procedures[0][1].split("_")[0]);
