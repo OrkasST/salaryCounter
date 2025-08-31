@@ -67,7 +67,20 @@ class App {
                 "relax90": "Релакс 90",
 
                 "full": "Полный (Стоун 60 + СПА 60)"
-            }
+            },
+            _proceduresAlphabetReverse: {
+                "СПА 30" : "spa30",
+                "СПА 60" : "spa60",
+                "СПА 90" : "spa90",
+
+                "Стоун 60" : "stone60",
+                "Стоун 90" : "stone90",
+
+                "Релакс 60" : "relax60",
+                "Релакс 90" : "relax90",
+
+                "Полный (Стоун 60 + СПА 60)" : "full"
+            },
         }
 
         this.today = {
@@ -91,6 +104,15 @@ class App {
 
         if (localStorage.data) {
             let data = JSON.parse( localStorage.data );
+
+            if (!data._proceduresAlphabet.hasOwnProperty(data.procedures[0][1].split("_")[0])) {
+                for (let i = 0; i < data.procedures.length; i++) {
+                    let log = data.procedures[0][1].split("_")
+                    log[0] = this.data._proceduresAlphabetReverse[log[0]]
+                    console.log('log[0]: ', log[0]);
+                }
+            }
+
             this.data = {...data}
             this.showFulfilled()
         }
