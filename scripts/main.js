@@ -405,7 +405,34 @@ class App {
     }
 
     clearStorage() {
-        alert("Memory cleared");
         localStorage.clear()
+    }
+
+
+
+    // New Functions
+    
+
+
+    createElement(elementName, text, parent) {
+        let element = document.createElement(elementName)
+        element.innerText = text
+        parent.appendChild(element)
+        return element
+    }
+
+    createButton(text, parent, onClickF = null, onMouseDownF = null, onMouseUpF = null) {
+        let button = this.createElement("button", text, parent)
+        if (onClickF) button.addEventListener("click", (e) => onClickF(e))
+        if (onMouseDownF) button.addEventListener("click", (e) => onMouseDownF(e))
+        if (onMouseUpF) button.addEventListener("click", (e) => onMouseUpF(e))
+        return button
+    }
+
+    createInteractieInput(type, parent, onInputF = null, placeholder = null) {
+        let input = this.createElement("input", "", parent)
+        input.type = type
+        if (onInputF) input.addEventListener("input", (e) => onInputF(e))
+        if (placeholder) input.placeholder = placeholder
     }
 }
