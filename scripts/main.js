@@ -14,6 +14,9 @@ class App {
         this.cancelEditingBtn = document.getElementById("cancelEditing")
         this.clearMemoryBtn = document.getElementById("clearMemory")
 
+        this.defaultProcentChangeBtn = document.getElementById("default")
+        this.fullProcentChangeBtn = document.getElementById("fullChange")
+
         this.procedureForm = document.getElementById("addingProcedureForm")
         this.procedureList = document.getElementById("procedure")
 
@@ -27,6 +30,8 @@ class App {
         this.slaryPeriodCount = document.getElementById("slaryPeriodCount")
         this.filter = document.getElementById("filter")
         this.countFilter = document.getElementById("countFilter")
+
+        this.popup = document.getElementById("popup")
 
         this.salaryCounterUI = document.getElementById("slaryCount")
         this.procedureCounterUI = document.getElementById("proceduresCount")
@@ -102,6 +107,12 @@ class App {
         this.changeCostBtn.addEventListener("click", this.startCostEditing.bind(this))
         this.finishEditingBtn.addEventListener("click", this.finishCostEditing.bind(this))
         this.cancelEditingBtn.addEventListener("click", this.cancelCostEditing.bind(this))
+
+        this.defaultProcentChangeBtn.addEventListener("click", this.closePopUp)
+        this.fullProcentChangeBtn.addEventListener("click", () => {
+            this.isPercentageUpdating = true
+            this.closePopUp()
+        })
         
         this.calendar.addEventListener("input", this.updateDate.bind(this))
         this.filter.addEventListener("input", this.onFilterUpdate.bind(this))
@@ -321,10 +332,15 @@ class App {
                 field.type = "text"
                 field.id = i
                 field.value = this.data._cost[i]
-                field.addEventListener("input", () => { this._tempCosts[i] = field.value })
+                field.addEventListener("input", () => { 
+                    this._tempCosts[i] = field.value 
+                })
                 label.innerText = (this.data._proceduresAlphabet[i] || "Процент") + ": "
                 label.for = i
-
+                if (label.innerText === "Процент: ") field.addEventListener("input", () => {
+                    this.popup.classList.remove("disabled")
+                    this.finishEditingBtn.disabled = true
+                })
                 this._tempCosts[i] = this.data._cost[i]
 
                 div.append(label, field)
@@ -341,6 +357,7 @@ class App {
                 this.data._cost[i] = this._tempCosts[i]
             }
         }
+        if (this.isPercentageUpdating) this.updatePercentage()
         this.save()
         this.closeEditingForm()
     }
@@ -406,6 +423,29 @@ class App {
 
     clearStorage() {
         localStorage.clear()
+    }
+
+    closePopUp() {
+        this.popup.classList.add("disabled")
+        this.finishEditingBtn.disabled = false
+    }
+
+    updatePercentage() {
+        for (let i = 0; i < this.data.procedures.length; i++) {
+            let procedure = this.data.procedures[i][1].split("_")
+            for (let i = 1; i < procedure.length; i++) procedure[i] = parseInt(procedure[i], 10)
+            procedure[2] = this.data._cost['percent']*100
+            procedure[3] = this.data._cost['percent']*procedure[1]
+            procedure = procedure.join("_")
+            this.data.procedures[i][1] = procedure
+        }
+        this.save()
+
+        this.showFulfilled()
+        this.updatePeriod()
+        this.updateSalaryUI(this.today.month)
+        this.updateMonthUI()
+        this.updateProcedureCountUI()
     }
 
 

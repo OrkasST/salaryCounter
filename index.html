@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="icon" href="media/icons/coins.png" sizes="64x64" type="image/png">
     <link rel="stylesheet" href="./styles/main.css">
 </head>
+
 <body>
     <input type="date" id="calendar">
 
@@ -14,7 +16,7 @@
     <div>Зарплата за текущий период (<span id="slaryPeriod"></span>): <span id="slaryPeriodCount">0</span> BYN</div>
     <div>Сеансов за <span id="countFilter"></span>: <span id="proceduresCount">0</span></div>
     <div>
-        Показывать за: 
+        Показывать за:
         <select name="filter" id="filter">
             <option value="год">год</option>
             <option value="месяц">месяц</option>
@@ -26,7 +28,7 @@
     <button id="addProcedure">Добавить сеанс</button>
 
     <button id="changeCost">Изменить цены и процент</button>
-    
+
     <div id="addingProcedureForm" class="disabled">
         <label for="procedure">Выбери процедуру:</label>
 
@@ -44,7 +46,7 @@
                 <option value="relax60">Релакс 60</option>
                 <option value="relax90">Релакс 90</option>
             </optgroup>
-                <option value="full">Полный (Стоун 60 + СПА 60)</option>
+            <option value="full">Полный (Стоун 60 + СПА 60)</option>
         </select>
         <button id="finishAdding">Подтвердить</button>
     </div>
@@ -55,13 +57,20 @@
         </fieldset>
         <button id="finishEditing">Подтвердить</button>
         <button id="cancelEditing">Отменить</button>
-<br>
+        <br>
+        <div class="disabled" style="border: solid 1px black;" id="popup">
+            <p>Применить измененный процент к предыдущим сеансам?</p>
+            <button id="fullChange" >Да</button>
+            <button id="default" >Нет</button>
+        </div>
+        <br>
         <button id="clearMemory">Очистить Память</button>
     </div>
 
     <div id="fulfilled">
-        
+
     </div>
 </body>
 <script src="./scripts/main.js"></script>
+
 </html>
