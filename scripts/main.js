@@ -179,7 +179,7 @@ class App {
             full: this.today.date
         }
 
-        log += this.data._proceduresAlphabet[procedure] + "_"
+        log += procedure + "_"
         log += this.data._cost[procedure] + "_"
         log += this.data._cost["percent"]*100 + "_"
         log += this.countCost(procedure)
@@ -193,17 +193,27 @@ class App {
     }
 
     addSalary(procedure, date = null, ammount = null) {
+        console.log('procedure: ', procedure);
+        console.log('date: ', date);
         let period
         if (!date) period = this.today.day > 15 ? 1 : 0
         else period = date.day > 15 ? 1 : 0
 
-        if (!this.data.salary.hasOwnProperty(this.today.month)) {
-            this.data.salary[this.today.month] = [0, 0]
+        if (!this.data.salary.hasOwnProperty(this.today.month) || (date && !this.data.salary.hasOwnProperty(date.month))) {
+            date ? this.data.salary[date.month] = [0, 0]
+                : this.data.salary[this.today.month] = [0, 0]
+            console.log('this.data.salary: ', this.data.salary);
         }
         this.data.salary[date?.month || this.today.month][period] += ammount || this.countCost(procedure)
+        console.log('this.data.salary: ', this.data.salary);
     }
     
     countCost(procedure) {
+        console.log('procedure: ', procedure);
+        let g = parseInt((this.data._cost[procedure]*this.data._cost["percent"]).toFixed(2), 10)
+        console.log('this.data._cost[procedure]: ', this.data._cost[procedure]);
+        console.log('this.data._cost["percent"]: ', this.data._cost["percent"]);
+        console.log('g: ', g);
         return parseInt((this.data._cost[procedure]*this.data._cost["percent"]).toFixed(2), 10)
     }
 
@@ -248,7 +258,7 @@ class App {
         let procedureLogField = document.createElement("div")
         procedureLogField.innerHTML = `<hr>
             <div id="date">${date.full}</div>
-            <div id="procedure">Процедура: ${parsedLog.procedure}</div>
+            <div id="procedure">Процедура: ${this.data._proceduresAlphabet[parsedLog.procedure]}</div>
             <div id="cost">Стоимость: ${parsedLog.cost} BYN</div>
             <div id="percent">Процент: ${parsedLog.percent}%</div>
             <div id="income">Доход: ${parsedLog.income} BYN</div>`
@@ -431,11 +441,13 @@ class App {
     }
 
     updatePercentage() {
+        this.data.salary = {}
         for (let i = 0; i < this.data.procedures.length; i++) {
             let procedure = this.data.procedures[i][1].split("_")
             for (let i = 1; i < procedure.length; i++) procedure[i] = parseInt(procedure[i], 10)
             procedure[2] = this.data._cost['percent']*100
             procedure[3] = this.data._cost['percent']*procedure[1]
+            this.addSalary(procedure[0], this.data.procedures[i][0])
             procedure = procedure.join("_")
             this.data.procedures[i][1] = procedure
         }
