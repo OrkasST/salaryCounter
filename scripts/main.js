@@ -192,7 +192,9 @@ class App {
     }
     
     countCost(procedure) {
-        let g = parseInt((this.data._cost[procedure]*(this.isCourceCheckbox.checked ? 0.9 : 1)*this.data.percents[procedure]).toFixed(2), 10)
+        let g = parseFloat((this.data._cost[procedure]*(this.isCourceCheckbox.checked ? 0.9 : 1)*this.data.percents[procedure]).toFixed(2), 10)
+        console.log('g: ', g);
+        console.log('this.data._cost[procedure]*(this.isCourceCheckbox.checked ? 0.9 : 1)*this.data.percents[procedure]: ', this.data._cost[procedure]*(this.isCourceCheckbox.checked ? 0.9 : 1)*this.data.percents[procedure]);
         // return parseInt((this.data._cost[procedure]*this.data._cost["percent"]).toFixed(2), 10)
         return g
     }
@@ -204,7 +206,7 @@ class App {
             procedure: parcedLog[0],
             cost: parcedLog[1],
             percent: parcedLog[2],
-            income: parseInt(parcedLog[3], 10),
+            income: Math.round(parcedLog[3]),
         }
     }
 

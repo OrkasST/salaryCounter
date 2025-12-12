@@ -5,7 +5,6 @@ export class ProcedureCreator {
     }
 
     addProcedure(groupName, name, id, writeToDataFnc) {
-        console.log('groupName: ', groupName);
         groupName = groupName[0] == "=" ? groupName : "== " + groupName + " =="
         if (!this._groups.hasOwnProperty(groupName)) {
             let group = document.createElement("optgroup")
@@ -24,7 +23,6 @@ export class ProcedureCreator {
     }
 
     addSomeProcedures(idList, nameLib, groupLib, writeToDataFnc) {
-        console.log('nameLib: ', nameLib);
         for (let i = 0; i < idList.length; i++) {
             this.addProcedure(groupLib[idList[i]], nameLib[idList[i]], idList[i], writeToDataFnc)
         }
