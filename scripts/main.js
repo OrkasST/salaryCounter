@@ -1,3 +1,6 @@
+import { Data } from "./Data.js"
+import { ProcedureCreator } from "./ProcedureCreator.js"
+
 document.addEventListener("DOMContentLoaded", () => {
     const app = new App()
     app.init()
@@ -19,6 +22,7 @@ class App {
 
         this.procedureForm = document.getElementById("addingProcedureForm")
         this.procedureList = document.getElementById("procedure")
+        this.isCourceCheckbox = document.getElementById("isCource")
 
         this.changeForm = document.getElementById("changeForm")
         this.costFields = document.getElementById("costFields")
@@ -37,51 +41,7 @@ class App {
         this.procedureCounterUI = document.getElementById("proceduresCount")
 
         //data
-        this.data = {
-            procedures: [],
-            salary: {},
-            _cost: {
-                "spa30": 80,
-                "spa60": 150,
-                "spa90": 200,
-
-                "stone60":90,
-                "stone90": 120,
-
-                "relax60": 80,
-                "relax90": 100,
-
-                "full": 230,
-
-                "percent": 0.35
-            },
-            _proceduresAlphabet: {
-                "spa30": "СПА 30",
-                "spa60": "СПА 60",
-                "spa90": "СПА 90",
-
-                "stone60": "Стоун 60",
-                "stone90": "Стоун 90",
-
-                "relax60": "Релакс 60",
-                "relax90": "Релакс 90",
-
-                "full": "Полный (Стоун 60 + СПА 60)"
-            },
-            _proceduresAlphabetReverse: {
-                "СПА 30" : "spa30",
-                "СПА 60" : "spa60",
-                "СПА 90" : "spa90",
-
-                "Стоун 60" : "stone60",
-                "Стоун 90" : "stone90",
-
-                "Релакс 60" : "relax60",
-                "Релакс 90" : "relax90",
-
-                "Полный (Стоун 60 + СПА 60)" : "full"
-            },
-        }
+        this.data = new Data()
 
         this.today = {
             year: null,
@@ -91,6 +51,9 @@ class App {
         }
 
         this.procedureCount = 0
+
+        //utils
+        this.procedureCreator = new ProcedureCreator(this.procedureList)
     }
 
     init() {
@@ -102,23 +65,20 @@ class App {
 
         this.calendar.value = this.today.date
 
+        this.data.importInitialData()
         if (localStorage.data) {
-            let data = JSON.parse( localStorage.data );
-            console.log('data: ', data);
-
-            if (!data._proceduresAlphabet.hasOwnProperty(data.procedures[0][1].split("_")[0])) {
-                for (let i = 0; i < data.procedures.length; i++) {
-                    let log = data.procedures[i][1].split("_")
-                    log[0] = this.data._proceduresAlphabetReverse[log[0]]
-                    data.procedures[i][1] = log.join("_")
-                }
-            console.log('data: ', data);
-            }
-
-            this.data = {...data}
+            this.data.importData()
             this.showFulfilled()
         }
         
+        
+        this.procedureCreator.addSomeProcedures(
+            this.data.procedureNames,
+            this.data._proceduresAlphabet,
+            this.data.groups,
+            this.data.addProcedure.bind(this.data)
+        )
+
         this.updateMonthUI()
         this.updateProcedureCountUI()
         this.updateSalaryUI(this.today.month)
@@ -132,10 +92,10 @@ class App {
         this.finishEditingBtn.addEventListener("click", this.finishCostEditing.bind(this))
         this.cancelEditingBtn.addEventListener("click", this.cancelCostEditing.bind(this))
 
-        this.defaultProcentChangeBtn.addEventListener("click", this.closePopUp)
+        this.defaultProcentChangeBtn.addEventListener("click", this.closePopUp.bind(this))
         this.fullProcentChangeBtn.addEventListener("click", () => {
             this.isPercentageUpdating = true
-            this.closePopUp()
+            this.closePopUp.apply(this)
         })
         
         this.calendar.addEventListener("input", this.updateDate.bind(this))
@@ -186,6 +146,8 @@ class App {
         this.addProcedure(this.procedureList.value)
         this.procedureForm.classList.add("disabled")
 
+        // console.log("ydjysjvsba fgf",this.isCourceCheckbox.checked);
+
         this.save()
 
         this.updateProcedureCountUI()
@@ -204,8 +166,8 @@ class App {
         }
 
         log += procedure + "_"
-        log += this.data._cost[procedure] + "_"
-        log += this.data._cost["percent"]*100 + "_"
+        log += (this.isCourceCheckbox.checked ? this.data._cost[procedure] * 0.9 : this.data._cost[procedure]) + "_"
+        log += this.data.percents[procedure]*100 + "_"
         log += this.countCost(procedure)
         
         this.data.procedures.push([date, log])
@@ -217,8 +179,6 @@ class App {
     }
 
     addSalary(procedure, date = null, ammount = null) {
-        console.log('procedure: ', procedure);
-        console.log('date: ', date);
         let period
         if (!date) period = this.today.day > 15 ? 1 : 0
         else period = date.day > 15 ? 1 : 0
@@ -229,16 +189,12 @@ class App {
             console.log('this.data.salary: ', this.data.salary);
         }
         this.data.salary[date?.month || this.today.month][period] += ammount || this.countCost(procedure)
-        console.log('this.data.salary: ', this.data.salary);
     }
     
     countCost(procedure) {
-        console.log('procedure: ', procedure);
-        let g = parseInt((this.data._cost[procedure]*this.data._cost["percent"]).toFixed(2), 10)
-        console.log('this.data._cost[procedure]: ', this.data._cost[procedure]);
-        console.log('this.data._cost["percent"]: ', this.data._cost["percent"]);
-        console.log('g: ', g);
-        return parseInt((this.data._cost[procedure]*this.data._cost["percent"]).toFixed(2), 10)
+        let g = parseInt((this.data._cost[procedure]*(this.isCourceCheckbox.checked ? 0.9 : 1)*this.data.percents[procedure]).toFixed(2), 10)
+        // return parseInt((this.data._cost[procedure]*this.data._cost["percent"]).toFixed(2), 10)
+        return g
     }
 
     parseLog(log) {
@@ -348,7 +304,6 @@ class App {
 
         localStorage.clear()
         localStorage.setItem("data", data)
-        console.log("Data saved");
     }
 
     startCostEditing() {
@@ -357,27 +312,30 @@ class App {
         this.procedureForm.classList.add("disabled")
 
         this._tempCosts = {}
+        this._tempPercents = {}
 
         for (let i in this.data._cost) {
             if (this.data._cost.hasOwnProperty(i)) {
+                if (!this.data._proceduresAlphabet[i]) continue
+
                 let div = document.createElement("div")
-                let label = document.createElement("label")
-                let field = document.createElement("input")
-                field.type = "text"
-                field.id = i
-                field.value = this.data._cost[i]
-                field.addEventListener("input", () => { 
-                    this._tempCosts[i] = field.value 
+                let procedureField = this.createFormField("input", i, "text", this.data._cost[i])
+                let procedureLabel = this.createFormField("label", "", "", "", this.data._proceduresAlphabet[i], i)
+
+                let procedurePercentLable = this.createFormField("label", "", "", "", "Процент:", "ppf")
+                let procedurePercentField = this.createFormField("input", i, "text", this.data.percents[i])
+
+                procedureField.addEventListener("input", () => { 
+                    this._tempCosts[i] = procedureField.value
                 })
-                label.innerText = (this.data._proceduresAlphabet[i] || "Процент") + ": "
-                label.for = i
-                if (label.innerText === "Процент: ") field.addEventListener("input", () => {
+                if (procedureLabel.innerText === "Процент: ") procedureField.addEventListener("input", () => {
                     this.popup.classList.remove("disabled")
                     this.finishEditingBtn.disabled = true
                 })
                 this._tempCosts[i] = this.data._cost[i]
+                this._tempPercents[i] = this.data._cost[i]
 
-                div.append(label, field)
+                div.append(procedureLabel, procedureField, procedurePercentLable, procedurePercentField)
                 this.costFields.append(div)
             }
         }
@@ -385,6 +343,18 @@ class App {
 
         this.clearMemoryBtn.addEventListener("click", this.startReleasingMemory.bind(this))
     }
+
+    createFormField(elName, id, type, value, innerText, a_for) {
+        let element = document.createElement(elName)
+        if (id) element.id = id
+        if (type) element.type = type
+        if (value) element.value = value
+        if (innerText) element.innerText = innerText
+        if (a_for) element.for = a_for
+
+        return element
+    }
+
     finishCostEditing() {
         for (let i in this.data._cost) {
             if (this.data._cost.hasOwnProperty(i)) {
@@ -408,10 +378,12 @@ class App {
     }
 
     startReleasingMemory() {
+        console.log("releasing...");
         let button = document.createElement("button")
         button.innerText = "Очистить"
         let isPressed = false
         let timer = null
+
         button.addEventListener('mousedown', ()=>{
             isPressed = true
             console.log("MouseDown")
@@ -424,7 +396,7 @@ class App {
         })
         button.addEventListener('touchstart', ()=>{
             isPressed = true
-            console.log("MouseDown")
+            console.log("TouchStarted")
             this.clearMemoryBtn.disabled = true
             clearTimeout(timer)
             setTimeout(() => {
@@ -442,7 +414,7 @@ class App {
         })
         button.addEventListener('touchend', ()=>{
             isPressed = false
-            console.log("MouseUp")
+            console.log("TouchEnd")
             this.clearMemoryBtn.disabled = false
             timer = this.removeChild(button, this.changeForm)
         })
@@ -456,7 +428,9 @@ class App {
     }
 
     clearStorage() {
+        console.log("!!!Storage cleaned!!!");
         localStorage.clear()
+        alert("Storage was cleaned")
     }
 
     closePopUp() {

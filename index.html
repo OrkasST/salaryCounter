@@ -31,23 +31,11 @@
 
     <div id="addingProcedureForm" class="disabled">
         <label for="procedure">Выбери процедуру:</label>
+        <select name="procedure" id="procedure"></select>
 
-        <select name="procedure" id="procedure">
-            <optgroup label="== СПА ==">
-                <option value="spa30">СПА 30</option>
-                <option value="spa60">СПА 60</option>
-                <option value="spa90">СПА 90</option>
-            </optgroup>
-            <optgroup label="== Стоун ==">
-                <option value="stone60">Стоун 60</option>
-                <option value="stone90">Стоун 90</option>
-            </optgroup>
-            <optgroup label="== Релакс ==">
-                <option value="relax60">Релакс 60</option>
-                <option value="relax90">Релакс 90</option>
-            </optgroup>
-            <option value="full">Полный (Стоун 60 + СПА 60)</option>
-        </select>
+        <label for="isCource">Курс (-10% цена)</label>
+        <input type="checkbox" id="isCource">
+        
         <button id="finishAdding">Подтвердить</button>
     </div>
 
@@ -71,6 +59,6 @@
 
     </div>
 </body>
-<script src="./scripts/main.js"></script>
+<script src="./scripts/main.js" type="module"></script>
 
 </html>
