@@ -65,11 +65,9 @@ class App {
 
         this.calendar.value = this.today.date
 
-        this.data.importInitialData()
-        if (localStorage.data) {
-            this.data.importData()
-            this.showFulfilled()
-        }
+        this.data.importData(localStorage.data)
+        console.log('this.data: ', this.data);
+        this.showFulfilled()
         
         
         this.procedureCreator.addSomeProcedures(
@@ -141,6 +139,7 @@ class App {
 
     addProcedureStart() {
         this.procedureForm.classList.remove("disabled")
+        console.log(this.data.salary);
     }
     addProcedureFinish() {
         this.addProcedure(this.procedureList.value)
@@ -148,7 +147,7 @@ class App {
 
         // console.log("ydjysjvsba fgf",this.isCourceCheckbox.checked);
 
-        this.save()
+        this.data.save()
 
         this.updateProcedureCountUI()
         this.updateSalaryUI(this.today.month)
@@ -166,11 +165,12 @@ class App {
         }
 
         log += procedure + "_"
-        log += (this.isCourceCheckbox.checked ? this.data._cost[procedure] * 0.9 : this.data._cost[procedure]) + "_"
+        log += (this.isCourceCheckbox.checked ? (this.data._cost[procedure] * 0.9).toFixed(2) : this.data._cost[procedure]) + "_"
         log += this.data.percents[procedure]*100 + "_"
         log += this.countCost(procedure)
         
         this.data.procedures.push([date, log])
+        console.log('log: ', log);
 
         this.procedureCount++
         this.updateProcedureCountUI()
@@ -186,16 +186,13 @@ class App {
         if (!this.data.salary.hasOwnProperty(this.today.month) || (date && !this.data.salary.hasOwnProperty(date.month))) {
             date ? this.data.salary[date.month] = [0, 0]
                 : this.data.salary[this.today.month] = [0, 0]
-            console.log('this.data.salary: ', this.data.salary);
         }
         this.data.salary[date?.month || this.today.month][period] += ammount || this.countCost(procedure)
+        console.log('this.data.salary[date?.month || this.today.month][period]: ', this.data.salary[date?.month || this.today.month][period]);
     }
     
     countCost(procedure) {
-        let g = parseFloat((this.data._cost[procedure]*(this.isCourceCheckbox.checked ? 0.9 : 1)*this.data.percents[procedure]).toFixed(2), 10)
-        console.log('g: ', g);
-        console.log('this.data._cost[procedure]*(this.isCourceCheckbox.checked ? 0.9 : 1)*this.data.percents[procedure]: ', this.data._cost[procedure]*(this.isCourceCheckbox.checked ? 0.9 : 1)*this.data.percents[procedure]);
-        // return parseInt((this.data._cost[procedure]*this.data._cost["percent"]).toFixed(2), 10)
+        let g = Math.round(this.data._cost[procedure] * (this.isCourceCheckbox.checked ? 0.9 : 1) * this.data.percents[procedure])
         return g
     }
 
@@ -252,14 +249,17 @@ class App {
     }
 
     removeFulfilledProcedure(ind) {
+        console.log('ind: ', ind);
+
         let log = this.data.procedures.splice(ind,1)[0]
         this.showFulfilled()
+
         this.updateProcedureCountUI()
         let parsedLog = this.parseLog(log)
         this.addSalary('', log[0], -parsedLog.income)
         this.updateSalaryUI(log[0].month)
 
-        this.save()
+        this.data.save()
     }
 
     updateSalaryPeriodUI() {
@@ -325,17 +325,18 @@ class App {
                 let procedureLabel = this.createFormField("label", "", "", "", this.data._proceduresAlphabet[i], i)
 
                 let procedurePercentLable = this.createFormField("label", "", "", "", "Процент:", "ppf")
-                let procedurePercentField = this.createFormField("input", i, "text", this.data.percents[i])
+                let procedurePercentField = this.createFormField("input", i, "number", this.data.percents[i])
 
                 procedureField.addEventListener("input", () => { 
                     this._tempCosts[i] = procedureField.value
                 })
-                if (procedureLabel.innerText === "Процент: ") procedureField.addEventListener("input", () => {
+                procedurePercentField.addEventListener("input", () => {
+                    this._tempPercents[i] = parseFloat(procedurePercentField.value)
                     this.popup.classList.remove("disabled")
                     this.finishEditingBtn.disabled = true
                 })
                 this._tempCosts[i] = this.data._cost[i]
-                this._tempPercents[i] = this.data._cost[i]
+                this._tempPercents[i] = this.data.percents[i]
 
                 div.append(procedureLabel, procedureField, procedurePercentLable, procedurePercentField)
                 this.costFields.append(div)
@@ -358,13 +359,10 @@ class App {
     }
 
     finishCostEditing() {
-        for (let i in this.data._cost) {
-            if (this.data._cost.hasOwnProperty(i)) {
-                this.data._cost[i] = this._tempCosts[i]
-            }
-        }
+        this.data.changeCostsAndPercents(this._tempCosts, this._tempPercents)
+
         if (this.isPercentageUpdating) this.updatePercentage()
-        this.save()
+        this.data.save()
         this.closeEditingForm()
     }
     cancelCostEditing() {
@@ -445,13 +443,15 @@ class App {
         for (let i = 0; i < this.data.procedures.length; i++) {
             let procedure = this.data.procedures[i][1].split("_")
             for (let i = 1; i < procedure.length; i++) procedure[i] = parseInt(procedure[i], 10)
-            procedure[2] = this.data._cost['percent']*100
-            procedure[3] = this.data._cost['percent']*procedure[1]
+
+            procedure[2] = this.data.percents[procedure[0]]*100
+            procedure[3] = (this.data.percents[procedure[0]]*procedure[1]).toFixed(2)
+
             this.addSalary(procedure[0], this.data.procedures[i][0])
             procedure = procedure.join("_")
             this.data.procedures[i][1] = procedure
         }
-        this.save()
+        this.data.save()
 
         this.showFulfilled()
         this.updatePeriod()

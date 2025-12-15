@@ -23,6 +23,7 @@ export class ProcedureCreator {
     }
 
     addSomeProcedures(idList, nameLib, groupLib, writeToDataFnc) {
+        console.log('idList: ', idList);
         for (let i = 0; i < idList.length; i++) {
             this.addProcedure(groupLib[idList[i]], nameLib[idList[i]], idList[i], writeToDataFnc)
         }

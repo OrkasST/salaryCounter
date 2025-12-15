@@ -1,108 +1,105 @@
+import { Hasher } from "./Hash.js"
 import { procedureInitialList } from "./procedureInitialList.js"
 
 export class Data {
     constructor() {
         this.procedures = []
         this.salary = {}
-        this._cost = {
-            // "spa30": 80,
-            // "spa60": 150,
-            // "spa90": 200,
-
-            // "stone60": 90,
-            // "stone90": 120,
-
-            // "relax60": 80,
-            // "relax90": 100,
-
-            // "full": 230,
-
-            // "percent": 0.35
-        }
-        this.groups = {
-            // "spa30": "== СПА ==",
-            // "spa60": "== СПА ==",
-            // "spa90": "== СПА ==",
-
-            // "stone60": "== Стоун ==",
-            // "stone90": "== Стоун ==",
-
-            // "relax60": "== Релакс ==",
-            // "relax90": "== Релакс ==",
-
-            // "full": "== Иные =="
-        }
-
+        this._cost = {}
+        this.groups = {}
         this.percents = {}
+        this._proceduresAlphabet = {}
+        this._proceduresAlphabetReverse = {}
+        this.procedureNames = []
 
-        this._proceduresAlphabet = {
-            // "spa30": "СПА 30",
-            // "spa60": "СПА 60",
-            // "spa90": "СПА 90",
+        this._zipedData = []
 
-            // "stone60": "Стоун 60",
-            // "stone90": "Стоун 90",
+        this.hasher = new Hasher()
+    }
 
-            // "relax60": "Релакс 60",
-            // "relax90": "Релакс 90",
-
-            // "full": "Полный (Стоун 60 + СПА 60)"
-        }
-        this._proceduresAlphabetReverse = {
-            // "СПА 30": "spa30",
-            // "СПА 60": "spa60",
-            // "СПА 90": "spa90",
-
-            // "Стоун 60": "stone60",
-            // "Стоун 90": "stone90",
-
-            // "Релакс 60": "relax60",
-            // "Релакс 90": "relax90",
-
-            // "Полный (Стоун 60 + СПА 60)": "full"
-        }
-        this.procedureNames = [
-            // "spa30","spa60","spa90","stone60","stone90","relax60","relax90","full"
-        ]
+    importData(data) {
+        if (!data) this.importInitialData()
+        else this.loadSavedData(data)
     }
 
     importInitialData() {
-        procedureInitialList.forEach(procedure => {
-            this.addProcedure(procedure[0], procedure[1], procedure[2], procedure[3], procedure[4])
+        this._unzipProcedureList(procedureInitialList)
+    }
+    
+    _unzipProcedureList(list) {
+        list.forEach(procedure => {
+            if (typeof procedure[0] !== 'string') return
+
+            this.addProcedure(...procedure)
+            this._zipedData.push([...procedure])
         })
-        console.log(this);
     }
 
-    importData() {
-        let savedData = JSON.parse( localStorage.data );
 
-        if (!savedData._proceduresAlphabet.hasOwnProperty(savedData.procedures[0][1].split("_")[0])) {
-            for (let i = 0; i < savedData.procedures.length; i++) {
-                let log = savedData.procedures[i][1].split("_")
-                log[0] = this._proceduresAlphabetReverse[log[0]]
-                savedData.procedures[i][1] = log.join("_")
+    loadSavedData(data) {
+        let savedData = JSON.parse( data )
+        console.log('savedData: ', savedData);
+
+        for (let i = 0; i < savedData.initialProcedureList.length; i++) {
+
+            let initialProcedure = procedureInitialList.filter(el => el[0] == savedData.initialProcedureList[i][0])[0]
+
+            for (let j = 1; j < savedData.initialProcedureList[i].length; j++) {
+                if (savedData.initialProcedureList[i][j] !== initialProcedure[j])
+                {
+                    console.log('savedData.initialProcedureList[i][j]: ', savedData.initialProcedureList[i][j]);
+                    savedData.procedureList[i][j] = initialProcedure[j] 
+                    savedData.initialProcedureList[i][j] = initialProcedure[j]
+                    console.log('savedData.initialProcedureList[i][j]: ', savedData.initialProcedureList[i][j]);
+                }
             }
         }
 
+        this._unzipProcedureList(savedData.procedureList)
+
         this.procedures = [...savedData.procedures]
-        this.salary = {...this.salary, ...savedData.salary}
-        this._cost = {...this._cost, ...savedData._cost}
-        this._proceduresAlphabet = {...this._proceduresAlphabet, ...savedData._proceduresAlphabet}
-        this._proceduresAlphabetReverse = {...this._proceduresAlphabetReverse, ...savedData._proceduresAlphabetReverse}
+        this.salary = {...savedData.salary}
 
         console.log(this);
     }
 
     addProcedure(id, name, groupName, cost, percent) {
+        
         if (this._proceduresAlphabet.hasOwnProperty(id)) return 0
+
         this._proceduresAlphabet[id] = name
         this._proceduresAlphabetReverse[name] = id
         this.groups[id] = groupName
         this.procedureNames.push(id)
+
         if (cost) {
             this._cost[id] = cost
             this.percents[id] = percent
         }
+
         return 1
+    }
+
+    _modifyUnencoded() {
+
+    }
+
+    changeCostsAndPercents(tempCosts, tempPercents) {
+        for (let i = 0; i < this._zipedData.length; i++) {
+            this._cost[this._zipedData[i][0]] = tempCosts[this._zipedData[i][0]]
+            this.percents[this._zipedData[i][0]] = tempPercents[this._zipedData[i][0]]
+
+            this._zipedData[i][3] = tempCosts[this._zipedData[i][0]]
+            this._zipedData[i][4] = tempPercents[this._zipedData[i][0]]
+            console.log('tempPercents[this._zipedData[i][0]]: ', tempPercents[this._zipedData[i][0]]);
+        }
+    }
+
+    save() {
+        let data = {salary: this.salary, procedures: this.procedures, procedureList: this._zipedData, initialProcedureList: procedureInitialList}
+        data = JSON.stringify(data)
+
+        localStorage.clear()
+        localStorage.setItem("data", data)
     }
 }
