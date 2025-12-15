@@ -40,12 +40,18 @@ export class Data {
         let savedData = JSON.parse( data )
         console.log('savedData: ', savedData);
 
-        if (!savedData.initialProcedureList) {
+        if (savedData.initialProcedureList) {
+
             this._salary = {...savedData.salary}
-            this.procedures = {...savedData.procedures}
+            for (let i in savedData.procedures) {   
+                this.procedures.push(savedData.procedures[i])
+            }
+            console.log('this.procedures: ', this.procedures);
             this._zipedData = [...procedureInitialList]
 
             this.save()
+            savedData = JSON.parse(localStorage.data)
+            console.log('savedData: ', savedData);
         }
 
         for (let i = 0; i < savedData.initialProcedureList.length; i++) {
