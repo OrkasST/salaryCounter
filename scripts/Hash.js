@@ -1,38 +1,48 @@
 export class Hasher {
     constructor() {
-        console.log(this.readHash());
+        // console.log(this.readHash());
         window.addEventListener("hashchange", (e) => {
             console.log(this.readHash())
         })
     }
 
     toHash(input) {
-        let hash = procedureInitialList.map(el => el.join("$$")).join("%%")
+        let hash = input.map(el => el.join("$$")).join("%%")
 
-    let dec = ''
-    for (let i = 0; i<hash.length; i++) {
-        dec += hash.charCodeAt(i)
-    }
+        let code = ''
+        for (let i = 0; i < hash.length; i++) {
+            let part = hash.charCodeAt(i).toString(2)
+            code += "0".repeat(16 - part.length) + part
+            // console.log("BIN code part", "0".repeat(16 - part.length) + part);
+        }
+        // console.log(code.length);
 
-    let code = ''
-    for (let i = 0; i<hash.length; i++) {
-        code += hash.charCodeAt(i).toString(2)
-    }
+        let hex = ''
+        for (let i = 0; i < code.length; i += 16) {
+            // let part = parseInt(code.substring(i, i + 16), 2).toString(16)
+            let part = hash.charCodeAt(i).toString(16)
+            hex += "0".repeat(4 - part.length) + part
+            // console.log("HEX code part", "0".repeat(4 - part.length) + part);
+        }
+        console.log(hex.length);
 
-    let hex = ''
-    for (let i = 0; i < code.length; i+=8) {
-        hex += parseInt(code.substring(i, i+8), 2).toString(16)
-    }
-    console.log(dec.length)
-    console.log(code.length)
-    console.log(hex.length)
-    console.log(hash.length)
-
-    console.log("Logical operators")
-    console.log(2 & 1)
+        // this.parseHash(hex)
     }
 
     readHash() {
         return window.location.hash.substring(1)
+    }
+
+    parseHash(hash) {
+        let parsed = ''
+
+        let bin = ''
+        for (let i = 0; i < hash.length; i += 4) {
+            let part = parseInt(hash.substring(i, i + 4), 16).toString(2)
+            bin += "0".repeat(16 - part.length) + part
+        }
+
+        // console.log(hash);
+        console.log("Parsed bin: ", bin.length);
     }
 }

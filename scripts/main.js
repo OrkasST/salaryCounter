@@ -66,7 +66,6 @@ class App {
         this.calendar.value = this.today.date
 
         this.data.importData(localStorage.data)
-        console.log('this.data: ', this.data);
         this.showFulfilled()
         
         
@@ -139,13 +138,10 @@ class App {
 
     addProcedureStart() {
         this.procedureForm.classList.remove("disabled")
-        console.log(this.data.salary);
     }
     addProcedureFinish() {
         this.addProcedure(this.procedureList.value)
         this.procedureForm.classList.add("disabled")
-
-        // console.log("ydjysjvsba fgf",this.isCourceCheckbox.checked);
 
         this.data.save()
 
@@ -170,7 +166,6 @@ class App {
         log += this.countCost(procedure)
         
         this.data.procedures.push([date, log])
-        console.log('log: ', log);
 
         this.procedureCount++
         this.updateProcedureCountUI()
@@ -188,7 +183,6 @@ class App {
                 : this.data.salary[this.today.month] = [0, 0]
         }
         this.data.salary[date?.month || this.today.month][period] += ammount || this.countCost(procedure)
-        console.log('this.data.salary[date?.month || this.today.month][period]: ', this.data.salary[date?.month || this.today.month][period]);
     }
     
     countCost(procedure) {
@@ -249,8 +243,6 @@ class App {
     }
 
     removeFulfilledProcedure(ind) {
-        console.log('ind: ', ind);
-
         let log = this.data.procedures.splice(ind,1)[0]
         this.showFulfilled()
 
@@ -378,7 +370,6 @@ class App {
     }
 
     startReleasingMemory() {
-        console.log("releasing...");
         let button = document.createElement("button")
         button.innerText = "Очистить"
         let isPressed = false
@@ -386,21 +377,17 @@ class App {
 
         button.addEventListener('mousedown', ()=>{
             isPressed = true
-            console.log("MouseDown")
             this.clearMemoryBtn.disabled = true
             clearTimeout(timer)
             setTimeout(() => {
-                console.log("Time");
                 if (isPressed) this.clearStorage()
             }, 3000)
         })
         button.addEventListener('touchstart', ()=>{
             isPressed = true
-            console.log("TouchStarted")
             this.clearMemoryBtn.disabled = true
             clearTimeout(timer)
             setTimeout(() => {
-                console.log("Time");
                 if (isPressed) this.clearStorage()
             }, 3000)
         })
@@ -408,13 +395,11 @@ class App {
 
         button.addEventListener('mouseup', ()=>{
             isPressed = false
-            console.log("MouseUp")
             this.clearMemoryBtn.disabled = false
             timer = this.removeChild(button, this.changeForm)
         })
         button.addEventListener('touchend', ()=>{
             isPressed = false
-            console.log("TouchEnd")
             this.clearMemoryBtn.disabled = false
             timer = this.removeChild(button, this.changeForm)
         })
@@ -428,7 +413,6 @@ class App {
     }
 
     clearStorage() {
-        console.log("!!!Storage cleaned!!!");
         localStorage.clear()
         alert("Storage was cleaned")
     }

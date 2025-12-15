@@ -20,6 +20,8 @@ export class Data {
     importData(data) {
         if (!data) this.importInitialData()
         else this.loadSavedData(data)
+
+        // this.hasher.toHash(procedureInitialList)
     }
 
     importInitialData() {
@@ -38,20 +40,15 @@ export class Data {
 
     loadSavedData(data) {
         let savedData = JSON.parse( data )
-        console.log('savedData: ', savedData);
 
-        if (savedData.initialProcedureList) {
+        if (!savedData.initialProcedureList) {
 
-            this._salary = {...savedData.salary}
-            for (let i in savedData.procedures) {   
-                this.procedures.push(savedData.procedures[i])
-            }
-            console.log('this.procedures: ', this.procedures);
+            this.salary = {...savedData.salary}
+            this.procedures = [...savedData.procedures]
             this._zipedData = [...procedureInitialList]
 
             this.save()
             savedData = JSON.parse(localStorage.data)
-            console.log('savedData: ', savedData);
         }
 
         for (let i = 0; i < savedData.initialProcedureList.length; i++) {
@@ -61,10 +58,8 @@ export class Data {
             for (let j = 1; j < savedData.initialProcedureList[i].length; j++) {
                 if (savedData.initialProcedureList[i][j] !== initialProcedure[j])
                 {
-                    console.log('savedData.initialProcedureList[i][j]: ', savedData.initialProcedureList[i][j]);
                     savedData.procedureList[i][j] = initialProcedure[j] 
                     savedData.initialProcedureList[i][j] = initialProcedure[j]
-                    console.log('savedData.initialProcedureList[i][j]: ', savedData.initialProcedureList[i][j]);
                 }
             }
         }
@@ -73,8 +68,6 @@ export class Data {
 
         this.procedures = [...savedData.procedures]
         this.salary = {...savedData.salary}
-
-        console.log(this);
     }
 
     addProcedure(id, name, groupName, cost, percent) {
@@ -105,7 +98,6 @@ export class Data {
 
             this._zipedData[i][3] = tempCosts[this._zipedData[i][0]]
             this._zipedData[i][4] = tempPercents[this._zipedData[i][0]]
-            console.log('tempPercents[this._zipedData[i][0]]: ', tempPercents[this._zipedData[i][0]]);
         }
     }
 
