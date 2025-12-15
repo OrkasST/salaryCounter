@@ -1,5 +1,10 @@
 export class Hasher {
-    constructor() {}
+    constructor() {
+        console.log(this.readHash());
+        window.addEventListener("hashchange", (e) => {
+            console.log(this.readHash())
+        })
+    }
 
     toHash(input) {
         let hash = procedureInitialList.map(el => el.join("$$")).join("%%")
@@ -25,5 +30,9 @@ export class Hasher {
 
     console.log("Logical operators")
     console.log(2 & 1)
+    }
+
+    readHash() {
+        return window.location.hash.substring(1)
     }
 }

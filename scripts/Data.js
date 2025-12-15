@@ -40,6 +40,14 @@ export class Data {
         let savedData = JSON.parse( data )
         console.log('savedData: ', savedData);
 
+        if (!savedData.initialProcedureList) {
+            this._salary = {...savedData.salary}
+            this.procedures = {...savedData.procedures}
+            this._zipedData = [...procedureInitialList]
+
+            this.save()
+        }
+
         for (let i = 0; i < savedData.initialProcedureList.length; i++) {
 
             let initialProcedure = procedureInitialList.filter(el => el[0] == savedData.initialProcedureList[i][0])[0]
