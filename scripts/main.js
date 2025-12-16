@@ -1,4 +1,5 @@
 import { Data } from "./Data.js"
+import { LinkPopupHandler } from "./LinkPopupHandler.js"
 import { ProcedureCreator } from "./ProcedureCreator.js"
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -56,6 +57,7 @@ class App {
 
         //utils
         this.procedureCreator = new ProcedureCreator(this.procedureList)
+        this.linkPopupHandler = new LinkPopupHandler(() => this.data.createPort())
     }
 
     init() {
@@ -100,7 +102,10 @@ class App {
         this.calendar.addEventListener("input", this.updateDate.bind(this))
         this.filter.addEventListener("input", this.onFilterUpdate.bind(this))
 
-        this.createPortBtn.addEventListener("click", () => this.data.createPort())
+        this.createPortBtn.addEventListener("click", () => {
+            // this.linkPopupHandler.changeText(this.data.createPort.apply(this.data))
+            this.linkPopupHandler.show()
+        })
     }
 
     updateProcedureCountUI() {

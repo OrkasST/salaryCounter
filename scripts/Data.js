@@ -25,7 +25,7 @@ export class Data {
     importInitialData() {
         this._unzipProcedureList(procedureInitialList)
     }
-    
+
     _unzipProcedureList(list) {
         list.forEach(procedure => {
             if (typeof procedure[0] !== 'string') return
@@ -38,13 +38,13 @@ export class Data {
 
     loadSavedData(data) {
         let savedData = this.hasher.hash ?
-            this.hasher.parseHash() : JSON.parse( data )
+            this.hasher.parseHash() : JSON.parse(data)
 
         if (!savedData.initialProcedureList) {
 
-            this.salary = {...savedData.salary}
+            this.salary = { ...savedData.salary }
             this.procedures = [...savedData.procedures]
-            
+
             if (savedData.procedureList) this._zipedData = [...savedData.procedureList]
             else this._zipedData = [...procedureInitialList]
 
@@ -63,9 +63,8 @@ export class Data {
             }
 
             for (let j = 1; j < savedData.initialProcedureList[ind].length; j++) {
-                if (savedData.initialProcedureList[ind][j] !== procedureInitialList[i][j])
-                {
-                    savedData.procedureList[ind][j] = procedureInitialList[i][j] 
+                if (savedData.initialProcedureList[ind][j] !== procedureInitialList[i][j]) {
+                    savedData.procedureList[ind][j] = procedureInitialList[i][j]
                     savedData.initialProcedureList[ind][j] = procedureInitialList[i][j]
                 }
             }
@@ -74,7 +73,7 @@ export class Data {
         this._unzipProcedureList(savedData.procedureList)
 
         this.procedures = [...savedData.procedures]
-        this.salary = {...savedData.salary}
+        this.salary = { ...savedData.salary }
     }
 
     _findMathing(id, list) {
@@ -85,7 +84,7 @@ export class Data {
     }
 
     addProcedure(id, name, groupName, cost, percent) {
-        
+
         if (this._proceduresAlphabet.hasOwnProperty(id)) return 0
 
         this._proceduresAlphabet[id] = name
@@ -116,7 +115,7 @@ export class Data {
     }
 
     save() {
-        let data = {salary: this.salary, procedures: this.procedures, procedureList: this._zipedData, initialProcedureList: procedureInitialList}
+        let data = { salary: this.salary, procedures: this.procedures, procedureList: this._zipedData, initialProcedureList: procedureInitialList }
         data = JSON.stringify(data)
 
         localStorage.clear()
@@ -127,8 +126,6 @@ export class Data {
         let data = { salary: this.salary, procedures: this.procedures, procedureList: this._zipedData }
         data = JSON.stringify(data)
 
-        let promise = navigator.clipboard.writeText("https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data))
-
-        promise.then(e=>alert("Ссылка скопирована"))
+        return "https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data)
     }
-}
+}   
