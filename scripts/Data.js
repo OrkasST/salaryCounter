@@ -40,8 +40,6 @@ export class Data {
         let savedData = this.hasher.hash ?
             this.hasher.parseHash() : JSON.parse( data )
 
-        console.log('savedData: ', savedData);
-
         if (!savedData.initialProcedureList) {
 
             this.salary = {...savedData.salary}
@@ -131,6 +129,6 @@ export class Data {
 
         let promise = navigator.clipboard.writeText("https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data))
 
-        // promise.then(e=>alert("Ссылка скопирована"))
+        promise.then(e=>alert("Ссылка скопирована"))
     }
 }

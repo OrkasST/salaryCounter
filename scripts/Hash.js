@@ -1,18 +1,9 @@
 export class Hasher {
     constructor() {
         this.lib = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        console.log('this.lib: ', this.lib.length);
-        window.addEventListener("hashchange", (e) => {
-            console.log(this.readHash())
-        })
 
         this.hash = this.readHash()
-        console.log('this.hash: ', this.hash);
         window.location.hash = ''
-
-        // let n = this._numberToCode()
-        // console.log(n)
-        console.log(this._codeToNumber("ZZZ"))
     }
 
     toHash(input) {
@@ -24,8 +15,6 @@ export class Hasher {
             if (part.length < 3 && i > 0) part = "-" + part
             code += part
         }
-        console.log(code.length);
-        console.log(this.parseHash(code));
         return code
     }
 
@@ -45,8 +34,6 @@ export class Hasher {
             }
             else tempNum += hash[i]
         }
-        console.log(parsed.length);
-        console.log("~~~~~~~~");
         return JSON.parse(parsed)
     }
 
@@ -68,11 +55,5 @@ export class Hasher {
 
         let r = this.lib.indexOf(code[0]) * Math.pow(this.lib.length, code.length-1) + this._codeToNumber(code.substring(1))
         return r
-    }
-
-    compare(str1, str2) {
-        for (let i = 0; i < str1.length; i++) {
-            if (str1[i] != str2[i]) console.log(`(${i}) str1: ${str1[i]} | str2: ${str2[i]}`)
-        }
     }
 }
