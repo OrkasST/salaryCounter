@@ -131,6 +131,6 @@ export class Data {
 
         let promise = navigator.clipboard.writeText("https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data))
 
-        promise.then(e=>alert("Ссылка скопирована"))
+        // promise.then(e=>alert("Ссылка скопирована"))
     }
 }

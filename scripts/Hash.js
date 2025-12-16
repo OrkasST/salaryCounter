@@ -16,7 +16,6 @@ export class Hasher {
     }
 
     toHash(input) {
-        console.log('input: ', input)
         let code = ""
 
         for (let i = 0; i < input.length; i++) {
@@ -37,20 +36,17 @@ export class Hasher {
     parseHash(code) {
         let parsed = ""
         let hash = code
-        console.log('hash: ', hash);
-        let length = this._codeToNumber(hash.substring(0, 4))
 
         let tempNum = ""
         for (let i = 0; i <= hash.length; i++) {
             if (hash[i] == "-" || tempNum.length == 3 || i == hash.length) {
-                console.log('tempNum: ', tempNum);
                 parsed += String.fromCharCode(this._codeToNumber(tempNum))
                 tempNum = ""
             }
             else tempNum += hash[i]
         }
-        console.log(hash.length);
-        console.log('parsed: ', parsed);
+        console.log(parsed.length);
+        console.log("~~~~~~~~");
         return JSON.parse(parsed)
     }
 
