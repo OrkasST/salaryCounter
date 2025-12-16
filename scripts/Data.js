@@ -128,7 +128,6 @@ export class Data {
     createPort() {
         let data = { salary: this.salary, procedures: this.procedures, procedureList: this._zipedData }
         data = JSON.stringify(data)
-        console.log('data: ', data);
 
         let promise = navigator.clipboard.writeText("https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data))
 
