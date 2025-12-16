@@ -40,6 +40,8 @@ class App {
         this.salaryCounterUI = document.getElementById("slaryCount")
         this.procedureCounterUI = document.getElementById("proceduresCount")
 
+        this.createPortBtn = document.getElementById("createPortBtn")
+
         //data
         this.data = new Data()
 
@@ -97,6 +99,8 @@ class App {
         
         this.calendar.addEventListener("input", this.updateDate.bind(this))
         this.filter.addEventListener("input", this.onFilterUpdate.bind(this))
+
+        this.createPortBtn.addEventListener("click", () => this.data.createPort())
     }
 
     updateProcedureCountUI() {

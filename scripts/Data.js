@@ -18,10 +18,8 @@ export class Data {
     }
 
     importData(data) {
-        if (!data) this.importInitialData()
+        if (!data && !this.hasher.hash) this.importInitialData()
         else this.loadSavedData(data)
-
-        // this.hasher.toHash(procedureInitialList)
     }
 
     importInitialData() {
@@ -39,27 +37,38 @@ export class Data {
 
 
     loadSavedData(data) {
-        let savedData = JSON.parse( data )
+        let savedData = this.hasher.hash ?
+            this.hasher.parseHash() : JSON.parse( data )
+
+        console.log('savedData: ', savedData);
 
         if (!savedData.initialProcedureList) {
 
             this.salary = {...savedData.salary}
             this.procedures = [...savedData.procedures]
-            this._zipedData = [...procedureInitialList]
+            
+            if (savedData.procedureList) this._zipedData = [...savedData.procedureList]
+            else this._zipedData = [...procedureInitialList]
 
             this.save()
             savedData = JSON.parse(localStorage.data)
         }
 
-        for (let i = 0; i < savedData.initialProcedureList.length; i++) {
+        for (let i = 0; i < procedureInitialList.length; i++) {
 
-            let initialProcedure = procedureInitialList.filter(el => el[0] == savedData.initialProcedureList[i][0])[0]
+            let ind = this._findMathing(procedureInitialList[i][0], savedData.initialProcedureList)
 
-            for (let j = 1; j < savedData.initialProcedureList[i].length; j++) {
-                if (savedData.initialProcedureList[i][j] !== initialProcedure[j])
+            if (ind < 0) {
+                savedData.initialProcedureList.push(procedureInitialList[i])
+                savedData.procedureList.push(procedureInitialList[i])
+                continue;
+            }
+
+            for (let j = 1; j < savedData.initialProcedureList[ind].length; j++) {
+                if (savedData.initialProcedureList[ind][j] !== procedureInitialList[i][j])
                 {
-                    savedData.procedureList[i][j] = initialProcedure[j] 
-                    savedData.initialProcedureList[i][j] = initialProcedure[j]
+                    savedData.procedureList[ind][j] = procedureInitialList[i][j] 
+                    savedData.initialProcedureList[ind][j] = procedureInitialList[i][j]
                 }
             }
         }
@@ -68,6 +77,13 @@ export class Data {
 
         this.procedures = [...savedData.procedures]
         this.salary = {...savedData.salary}
+    }
+
+    _findMathing(id, list) {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i][0] == id) return i
+        }
+        return -1
     }
 
     addProcedure(id, name, groupName, cost, percent) {
@@ -107,5 +123,15 @@ export class Data {
 
         localStorage.clear()
         localStorage.setItem("data", data)
+    }
+
+    createPort() {
+        let data = { salary: this.salary, procedures: this.procedures, procedureList: this._zipedData }
+        data = JSON.stringify(data)
+        console.log('data: ', data);
+
+        let promise = navigator.clipboard.writeText("https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data))
+
+        promise.then(e=>alert("Ссылка скопирована"))
     }
 }
