@@ -127,7 +127,7 @@ export class Data {
         let data = { salary: this.salary, procedures: this.procedures, procedureList: this._zipedData }
         data = JSON.stringify(data)
 
-        let promise = navigator.clipboard.writeText("https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data))
+        let promise = navigator.clipboard.writeText("http://192.168.0.26:5500/index.html#" + this.hasher.toHash(data))
 
         promise.then(e=>alert("Ссылка скопирована"))
     }

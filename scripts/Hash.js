@@ -22,9 +22,9 @@ export class Hasher {
         return window.location.hash.substring(1)
     }
 
-    parseHash(code) {
+    parseHash() {
         let parsed = ""
-        let hash = code
+        let hash = this.hash
 
         let tempNum = ""
         for (let i = 0; i <= hash.length; i++) {
