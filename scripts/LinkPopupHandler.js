@@ -7,15 +7,14 @@ export class LinkPopupHandler {
         this.link = document.getElementById("link")
 
         this.copyBtn.addEventListener("click", () => {
-            navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
-                this.changeText(result.state)
-                if (result.state === "granted" || result.state === "prompt") {
-                    navigator.clipboard.writeText(this.link.value)
-                }
-            });
             link.select();
             link.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(this.link.value)//.then(() => alert("Ссылка скопирована"))
+
+            navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
+                if (result.state === "granted" || result.state === "prompt") {
+                    navigator.clipboard.writeText(this.link.value).then(() => alert("Ссылка скопирована"))
+                }
+            });
         })
         this.closeBtn.addEventListener("click", () => {
             this.link.value = ""

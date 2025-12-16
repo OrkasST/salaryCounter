@@ -103,7 +103,7 @@ class App {
         this.filter.addEventListener("input", this.onFilterUpdate.bind(this))
 
         this.createPortBtn.addEventListener("click", () => {
-            // this.linkPopupHandler.changeText(this.data.createPort.apply(this.data))
+            this.linkPopupHandler.changeText(this.data.createPort.apply(this.data))
             this.linkPopupHandler.show()
         })
     }
