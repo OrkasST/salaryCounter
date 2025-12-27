@@ -291,6 +291,8 @@ class App {
     }
 
     countHours(month, period) {
+        console.log('this.data.workingMinutes: ', this.data.workingMinutes);
+
         let minutes = this.data.workingMinutes[month][period]
         let hours = Math.floor(minutes / 60)
         minutes = minutes - hours * 60

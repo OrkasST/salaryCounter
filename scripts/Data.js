@@ -51,6 +51,7 @@ export class Data {
 
             this.salary = { ...savedData.salary }
             this.procedures = [...savedData.procedures]
+            this.workingMinutes = {...savedData.workingMinutes}
 
             if (savedData.procedureList) this._zipedData = [...savedData.procedureList]
             else this._zipedData = [...procedureInitialList]
@@ -88,6 +89,7 @@ export class Data {
 
         this.procedures = [...savedData.procedures]
         this.salary = { ...savedData.salary }
+        this.workingMinutes = {...savedData.workingMinutes}
     }
 
     _findMathing(id, list) {
@@ -131,7 +133,7 @@ export class Data {
     }
 
     save() {
-        let data = { salary: this.salary, procedures: this.procedures, procedureList: this._zipedData, initialProcedureList: procedureInitialList }
+        let data = { salary: this.salary, workingMinutes: this.workingMinutes, procedures: this.procedures, procedureList: this._zipedData, initialProcedureList: procedureInitialList }
         data = JSON.stringify(data)
 
         localStorage.clear()
