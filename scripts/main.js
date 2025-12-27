@@ -31,8 +31,14 @@ class App {
         this.fulfilledProcedures = document.getElementById("fulfilled")
         this.calendar = document.getElementById("calendar")
         this.monthUI = document.getElementById("month")
+
         this.slaryPeriod = document.getElementById("slaryPeriod")
+        this.timePeriod = document.getElementById("timePeriod")
+
         this.slaryPeriodCount = document.getElementById("slaryPeriodCount")
+        this.timePeriodCountHour = document.getElementById("timePeriodCountHour")
+        this.timePeriodCountMinute = document.getElementById("timePeriodCountMinute")
+
         this.filter = document.getElementById("filter")
         this.countFilter = document.getElementById("countFilter")
 
@@ -132,6 +138,7 @@ class App {
     }
     updatePeriod() {
         this.slaryPeriod.innerText = this.today.day > 15 ? "16-31" : "1-15"
+        this.timePeriod.innerText = this.today.day > 15 ? "16-31" : "1-15"
     }
     onFilterUpdate() {
         this.showFulfilled()
@@ -188,10 +195,16 @@ class App {
         else period = date.day > 15 ? 1 : 0
 
         if (!this.data.salary.hasOwnProperty(this.today.month) || (date && !this.data.salary.hasOwnProperty(date.month))) {
-            date ? this.data.salary[date.month] = [0, 0]
-                : this.data.salary[this.today.month] = [0, 0]
+            if (date) {
+                this.data.salary[date.month] = [0, 0]
+                this.data.workingMinutes[date.month] = [0, 0]
+            } else {
+                this.data.salary[this.today.month] = [0, 0]
+                this.data.workingMinutes[this.today.month] = [0, 0]
+            }
         }
         this.data.salary[date?.month || this.today.month][period] += ammount || this.countCost(procedure)
+        this.data.workingMinutes[date?.month || this.today.month][period] += this.data.time[procedure]
     }
     
     countCost(procedure) {
@@ -265,8 +278,23 @@ class App {
 
     updateSalaryPeriodUI() {
         let period = this.today.day > 15 ? 1 : 0
-        if (this.data.salary[this.today.month]) this.slaryPeriodCount.innerText = this.data.salary[this.today.month][period]
-        else this.slaryPeriodCount.innerText = "0"
+        if (this.data.salary[this.today.month]) {
+            this.slaryPeriodCount.innerText = this.data.salary[this.today.month][period]
+
+            let time = this.countHours(this.today.month, period)
+            this.timePeriodCountHour.innerText = time[0]
+            this.timePeriodCountMinute.innerText = time[1]
+        }
+        else {
+            this.slaryPeriodCount.innerText = "0"
+        }
+    }
+
+    countHours(month, period) {
+        let minutes = this.data.workingMinutes[month][period]
+        let hours = Math.floor(minutes / 60)
+        minutes = minutes - hours * 60
+        return [hours, minutes]
     }
 
     showFulfilled() {

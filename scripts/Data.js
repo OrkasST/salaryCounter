@@ -4,13 +4,18 @@ import { procedureInitialList } from "./procedureInitialList.js"
 export class Data {
     constructor() {
         this.procedures = []
+
         this.salary = {}
         this._cost = {}
+
         this.groups = {}
         this.percents = {}
         this._proceduresAlphabet = {}
         this._proceduresAlphabetReverse = {}
         this.procedureNames = []
+
+        this.time = {}
+        this.workingMinutes = {}
 
         this._zipedData = []
 
@@ -33,6 +38,8 @@ export class Data {
             this.addProcedure(...procedure)
             this._zipedData.push([...procedure])
         })
+
+        this.save()
     }
 
 
@@ -62,8 +69,15 @@ export class Data {
                 continue;
             }
 
-            for (let j = 1; j < savedData.initialProcedureList[ind].length; j++) {
-                if (savedData.initialProcedureList[ind][j] !== procedureInitialList[i][j]) {
+            if (procedureInitialList[0][0]) {
+                savedData.procedureList[ind-1] = [...procedureInitialList[i]]
+                savedData.initialProcedureList[ind] = [...procedureInitialList[i]]
+
+                continue
+            }
+
+            for (let j = 1; j < procedureInitialList[i].length; j++) {
+                if (!savedData.initialProcedureList[ind][j] || savedData.initialProcedureList[ind][j] !== procedureInitialList[i][j]) {
                     savedData.procedureList[ind][j] = procedureInitialList[i][j]
                     savedData.initialProcedureList[ind][j] = procedureInitialList[i][j]
                 }
@@ -83,7 +97,7 @@ export class Data {
         return -1
     }
 
-    addProcedure(id, name, groupName, cost, percent) {
+    addProcedure(id, name, groupName, cost, percent, time) {
 
         if (this._proceduresAlphabet.hasOwnProperty(id)) return 0
 
@@ -91,6 +105,8 @@ export class Data {
         this._proceduresAlphabetReverse[name] = id
         this.groups[id] = groupName
         this.procedureNames.push(id)
+        this.time[id] = time
+
 
         if (cost) {
             this._cost[id] = cost
