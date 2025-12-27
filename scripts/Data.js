@@ -38,8 +38,6 @@ export class Data {
             this.addProcedure(...procedure)
             this._zipedData.push([...procedure])
         })
-
-        this.save()
     }
 
 

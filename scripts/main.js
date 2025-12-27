@@ -204,7 +204,7 @@ class App {
             }
         }
         this.data.salary[date?.month || this.today.month][period] += ammount || this.countCost(procedure)
-        this.data.workingMinutes[date?.month || this.today.month][period] += this.data.time[procedure]
+        this.data.workingMinutes[date?.month || this.today.month][period] += (ammount ? -1 : 1) * this.data.time[procedure]
     }
     
     countCost(procedure) {
@@ -270,7 +270,8 @@ class App {
 
         this.updateProcedureCountUI()
         let parsedLog = this.parseLog(log)
-        this.addSalary('', log[0], -parsedLog.income)
+
+        this.addSalary(log[1].split("_")[0], log[0], -parsedLog.income)
         this.updateSalaryUI(log[0].month)
 
         this.data.save()
@@ -291,8 +292,6 @@ class App {
     }
 
     countHours(month, period) {
-        console.log('this.data.workingMinutes: ', this.data.workingMinutes);
-
         let minutes = this.data.workingMinutes[month][period]
         let hours = Math.floor(minutes / 60)
         minutes = minutes - hours * 60
