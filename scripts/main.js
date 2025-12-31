@@ -62,7 +62,7 @@ class App {
         this.procedureCount = 0
 
         //utils
-        this.procedureCreator = new ProcedureCreator(this.procedureList)
+        this.procedureCreator = new ProcedureCreator(this.procedureList, this.procedureForm)
         this.linkPopupHandler = new LinkPopupHandler(() => this.data.createPort())
     }
 
@@ -80,7 +80,7 @@ class App {
         this.showFulfilled()
         
         
-        this.procedureCreator.addSomeProcedures(
+        this.procedureCreator.createProcedureList(
             this.data.procedureNames,
             this.data._proceduresAlphabet,
             this.data.groups,
