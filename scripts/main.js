@@ -76,6 +76,7 @@ class App {
         this.calendar.value = this.today.date
 
         this.data.importData(localStorage.data)
+        this.checkUpdates()
         this.showFulfilled()
         
         
@@ -190,21 +191,31 @@ class App {
     }
 
     addSalary(procedure, date = null, ammount = null) {
-        let period
-        if (!date) period = this.today.day > 15 ? 1 : 0
-        else period = date.day > 15 ? 1 : 0
+        let period = this.getPeriod(date ? date : this.today)
 
         if (!this.data.salary.hasOwnProperty(this.today.month) || (date && !this.data.salary.hasOwnProperty(date.month))) {
-            if (date) {
-                this.data.salary[date.month] = [0, 0]
-                this.data.workingMinutes[date.month] = [0, 0]
-            } else {
-                this.data.salary[this.today.month] = [0, 0]
-                this.data.workingMinutes[this.today.month] = [0, 0]
-            }
+            if (date) this.data.salary[date.month] = [0, 0]
+            else this.data.salary[this.today.month] = [0, 0]
         }
         this.data.salary[date?.month || this.today.month][period] += ammount || this.countCost(procedure)
-        this.data.workingMinutes[date?.month || this.today.month][period] += (ammount ? -1 : 1) * this.data.time[procedure]
+        
+        this.writeTime(procedure, date || this.today, !!ammount)
+    }
+
+    getPeriod(date) {
+        return date.day > 15 ? 1 : 0
+    }
+
+    writeTime(procedure, date, isRemoved = false) {
+        console.log('isRemoved: ', isRemoved);
+        console.log('date: ', date);
+        console.log('procedure: ', procedure);
+        let period = this.getPeriod(date)
+        if (!this.data.workingMinutes.hasOwnProperty(date.month)) {
+            this.data.workingMinutes[date.month] = [0, 0]
+        }
+        this.data.workingMinutes[date.month][period] += (isRemoved ? -1 : 1) * this.data.time[procedure]
+
     }
     
     countCost(procedure) {
@@ -278,7 +289,7 @@ class App {
     }
 
     updateSalaryPeriodUI() {
-        let period = this.today.day > 15 ? 1 : 0
+        let period = this.getPeriod(this.today)
         if (this.data.salary[this.today.month]) {
             this.slaryPeriodCount.innerText = this.data.salary[this.today.month][period]
 
@@ -508,5 +519,21 @@ class App {
         input.type = type
         if (onInputF) input.addEventListener("input", (e) => onInputF(e))
         if (placeholder) input.placeholder = placeholder
+    }
+
+    checkUpdates() {
+        console.log("Checking updates...");
+        if (!Object.keys(this.data.workingMinutes).length) {
+            console.log(this.data.procedures)
+            for (let i = 0; i < this.data.procedures.length; i++) {
+                console.log('this.data.procedures.length: ', this.data.procedures.length);
+                let procedureId = this.parseLog(this.data.procedures[i]).procedure
+                console.log('procedureId: ', procedureId);
+                let procedureDate = this.data.procedures[i][0]
+
+                this.writeTime(procedureId, procedureDate)
+            }
+            console.log(this.data.workingMinutes);
+        }
     }
 }

@@ -88,6 +88,8 @@ export class Data {
         this.procedures = [...savedData.procedures]
         this.salary = { ...savedData.salary }
         this.workingMinutes = {...savedData.workingMinutes}
+
+        this.save()
     }
 
     _findMathing(id, list) {
@@ -132,6 +134,7 @@ export class Data {
 
     save() {
         let data = { salary: this.salary, workingMinutes: this.workingMinutes, procedures: this.procedures, procedureList: this._zipedData, initialProcedureList: procedureInitialList }
+        console.log('this.workingMinutes: ', this.workingMinutes);  
         data = JSON.stringify(data)
 
         localStorage.clear()
