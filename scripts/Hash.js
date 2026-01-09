@@ -7,6 +7,7 @@ export class Hasher {
     }
 
     toHash(input) {
+        console.log('input: ', input);
         let code = ""
 
         for (let i = 0; i < input.length; i++) {

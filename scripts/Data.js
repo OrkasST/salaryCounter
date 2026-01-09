@@ -89,6 +89,8 @@ export class Data {
         this.salary = { ...savedData.salary }
         this.workingMinutes = {...savedData.workingMinutes}
 
+        this.modifySalaryFor_01_09_2026_Update()
+
         this.save()
     }
 
@@ -134,7 +136,6 @@ export class Data {
 
     save() {
         let data = { salary: this.salary, workingMinutes: this.workingMinutes, procedures: this.procedures, procedureList: this._zipedData, initialProcedureList: procedureInitialList }
-        console.log('this.workingMinutes: ', this.workingMinutes);  
         data = JSON.stringify(data)
 
         localStorage.clear()
@@ -144,7 +145,25 @@ export class Data {
     createPort() {
         let data = { salary: this.salary, procedures: this.procedures, procedureList: this._zipedData }
         data = JSON.stringify(data)
-
+        
         return "https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data)
+    }
+
+
+    modifySalaryFor_01_09_2026_Update() {
+        for (let checkName in this.salary) {
+            if (this.salary.hasOwnProperty(checkName)){// && this.salary[checkName].length == 2) {
+                this.salary = {}
+                for (let i = 0; i < this.procedures.length; i++) {
+                    if (!this.salary[this.procedures[i][0].month]) {
+                        this.salary[this.procedures[i][0].month] = [...new Array(32)].fill(0)
+                    }
+
+                    let salary = parseFloat(this.procedures[i][1].split("_")[3])
+                    this.salary[this.procedures[i][0].month][this.procedures[i][0].day] += salary
+                }
+            }
+            break
+        }
     }
 }   
