@@ -136,7 +136,6 @@ export class Data {
 
     save() {
         let data = { salary: this.salary, workingMinutes: this.workingMinutes, procedures: this.procedures, procedureList: this._zipedData, initialProcedureList: procedureInitialList }
-        console.log('this.workingMinutes: ', this.workingMinutes);  
         data = JSON.stringify(data)
 
         localStorage.clear()
@@ -152,33 +151,19 @@ export class Data {
 
 
     modifySalaryFor_01_09_2026_Update() {
-        console.log("Modif");
         for (let checkName in this.salary) {
             if (this.salary.hasOwnProperty(checkName)){// && this.salary[checkName].length == 2) {
                 this.salary = {}
                 for (let i = 0; i < this.procedures.length; i++) {
                     if (!this.salary[this.procedures[i][0].month]) {
-                        console.log("ADDING NUMBERS");
-                        
-                        console.log('this.procedures[i][0].month: ', this.procedures[i][0].month);
-                        console.log('this.procedures[i][0].day: ', this.procedures[i][0].day);
-
                         this.salary[this.procedures[i][0].month] = [...new Array(32)].fill(0)
-                        console.log('this.salary[this.procedures[i][0].month]: ', [...this.salary[this.procedures[i][0].month]]);
                     }
-                    console.log('this.procedures[i][0].month: ', this.procedures[i][0].month);
-                    console.log('this.procedures[i][0].day: ', this.procedures[i][0].day);
 
                     let salary = parseFloat(this.procedures[i][1].split("_")[3])
-                    console.log('salary: ', salary);
-                    console.log('this.salary[this.procedures[i][0].month]: ', [...this.salary[this.procedures[i][0].month]]);
-                    console.log('this.salary[this.procedures[i][0].month][this.procedures[i][0].day]: ', this.salary[this.procedures[i][0].month][this.procedures[i][0].day]);
                     this.salary[this.procedures[i][0].month][this.procedures[i][0].day] += salary
-                    console.log('this.salary[this.procedures[i][0].month][this.procedures[i][0].day]: ', this.salary[this.procedures[i][0].month][this.procedures[i][0].day]);
                 }
             }
             break
         }
-        console.log(this.salary);
     }
 }   

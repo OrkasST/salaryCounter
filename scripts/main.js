@@ -241,7 +241,6 @@ class App {
     
     countCost(procedure) {
         let g = Math.round(this.data._cost[procedure] * (this.isCourceCheckbox.checked ? 0.9 : 1) * this.data.percents[procedure])
-        console.log('this.data._cost: ', this.data._cost);
         return g
     }
 
@@ -357,9 +356,7 @@ class App {
         } else minutes = this.data.workingMinutes[date.month][date.day]
 
         let hours = Math.floor(minutes / 60)
-        console.log('hours: ', hours);
         minutes = minutes - hours * 60
-        console.log('minutes: ', minutes);
         return [hours, minutes]
     }
 
@@ -576,16 +573,12 @@ class App {
 
     checkUpdates() {
         if (!Object.keys(this.data.workingMinutes).length) {
-            // console.log(this.data.procedures)
             for (let i = 0; i < this.data.procedures.length; i++) {
-                // console.log('this.data.procedures.length: ', this.data.procedures.length);
                 let procedureId = this.parseLog(this.data.procedures[i]).procedure
-                // console.log('procedureId: ', procedureId);
                 let procedureDate = this.data.procedures[i][0]
 
                 this.writeTime(procedureId, procedureDate)
             }
-            // console.log(this.data.workingMinutes);
         }
     }
 }
