@@ -159,7 +159,6 @@ export class Data {
 
 
     modifySalaryFor_01_09_2026_Update() {
-        throw new Error("kugsdvdsvksdbvk")
         for (let checkName in this.salary) {
             if (this.salary.hasOwnProperty(checkName)) {// && this.salary[checkName].length == 2) {
                 this.salary = {}
