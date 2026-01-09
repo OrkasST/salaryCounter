@@ -1,4 +1,4 @@
-import { DebugLog } from "./debugLog.js"
+import { OnError } from "./debugLog.js"
 import { Hasher } from "./Hash.js"
 import { procedureInitialList } from "./procedureInitialList.js"
 
@@ -43,7 +43,6 @@ export class Data {
 
 
     loadSavedData(data) {
-
         try {
 
             let savedData = this.hasher.hash ?
@@ -97,8 +96,8 @@ export class Data {
 
             this.save()
 
-        } catch (error) {
-            DebugLog(error)
+        } catch (e) {
+            OnError(e.name, e.message, "Data.js", "LoadSavedData")
         }
     }
 
@@ -159,6 +158,9 @@ export class Data {
 
 
     modifySalaryFor_01_09_2026_Update() {
+        let a = {}
+        let n = a.data.length
+
         for (let checkName in this.salary) {
             if (this.salary.hasOwnProperty(checkName) && this.salary[checkName].length == 2) {
                 this.salary = {}

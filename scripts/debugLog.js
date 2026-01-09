@@ -6,6 +6,14 @@ const closeBtn = document.createElement("button")
 export function DebugLog(text) {
     logEl.innerHTML += `<div style="background-color: red; margin-left: 10%;">${text}</div>`
 }
+export function OnError(name, message, file, fnc) {
+    logEl.innerHTML += `<div style="background-color: red; margin-left: 10%;">
+            <div>${name}</div>
+            <div>${message}</div>
+            <div>${file}</div>
+            <div>${fnc}</div>
+        </div>`
+}
 
 export function ShowLog() {
     logContainerEl.style = "padding: 0; margin: 0; position: absolute; z-index: 3; top: 0; left: 0; width: 100vw; height: 100vh; background-color: white; overflow: hidden;"

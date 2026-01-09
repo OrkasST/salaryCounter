@@ -1,5 +1,5 @@
 import { Data } from "./Data.js"
-import { DebugLog, ShowLog } from "./debugLog.js"
+import { DebugLog, OnError, ShowLog } from "./debugLog.js"
 import { LinkPopupHandler } from "./LinkPopupHandler.js"
 import { ProcedureCreator } from "./ProcedureCreator.js"
 
@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
     app.init()
     }
-    catch(error) {
-        DebugLog(error)
+    catch(e) {
+        OnError(e.name, e.message, "main.js", "init")
     }
 })
 
