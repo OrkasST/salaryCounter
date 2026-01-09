@@ -1,10 +1,19 @@
 import { Data } from "./Data.js"
+import { DebugLog, ShowLog } from "./debugLog.js"
 import { LinkPopupHandler } from "./LinkPopupHandler.js"
 import { ProcedureCreator } from "./ProcedureCreator.js"
 
 document.addEventListener("DOMContentLoaded", () => {
+    const showLogBtn = document.getElementById("showLog")
+    showLogBtn.addEventListener("click", () => {ShowLog()})
+
     const app = new App()
+    try {
     app.init()
+    }
+    catch(error) {
+        DebugLog(error)
+    }
 })
 
 class App {
@@ -57,6 +66,7 @@ class App {
 
         this.createPortBtn = document.getElementById("createPortBtn")
 
+
         //data
         this.data = new Data()
 
@@ -86,6 +96,8 @@ class App {
 
         this.calendar.value = this.today.date
 
+        this.addListeners()
+
         this.data.importData(localStorage.data)
         this.checkUpdates()
         this.showFulfilled()
@@ -102,7 +114,9 @@ class App {
         this.updateProcedureCountUI()
         this.updateSalaryUI(this.today)
         this.updateCountFilter()
+    }
 
+    addListeners() {
         this.addProcedureBtn.addEventListener("click", this.addProcedureStart.bind(this))
         this.procedureAcceptBtn.addEventListener("click", this.addProcedureFinish.bind(this))
 
@@ -340,6 +354,7 @@ class App {
     }
 
     countHours(date, period = -1, isPerDay = false) {
+
         if (!this.data.workingMinutes[date.month]) return [0, 0]
         
         let minutes = 0

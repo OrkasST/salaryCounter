@@ -16,29 +16,37 @@
         <button id="closePopupBtn">Закрыть</button>
     </div>
 
-    <input type="date" id="calendar">
-    <button id="createPortBtn">Копировать локальные данные</button>
+    <div class="info">
+        <input type="date" id="calendar">
+        <button id="createPortBtn">Копировать локальные данные</button>
 
-    <div>За текущий месяц (<b><span id ="month"></span></b>) зарплата: <span id="slaryCount">0</span> BYN, время: <span id="timeMonthCountHour">0</span> час <span id="timeMonthCountMinute">0</span> мин</div>
-    <hr>
-    <div>За текущий период (<b><span id="period"></span></b>) зарплата: <span id="slaryPeriodCount">0</span> BYN, время: <span id="timePeriodCountHour">0</span> час <span id="timePeriodCountMinute">0</span> мин</div>
-    <hr>
-    <div>За текущий день (<b><span id="day"></span></b>) зарплата: <span id="slaryDayCount">0</span> BYN, время: <span id="timeDayCountHour">0</span> час <span id="timeDayCountMinute">0</span> мин</div>
-    <hr>
-    <div>Сеансов за <span id="countFilter"></span>: <span id="proceduresCount">0</span></div>
-    <div>
-        Показывать за:
-        <select name="filter" id="filter">
-            <option value="год">год</option>
-            <option value="месяц">месяц</option>
-            <option value="период">период</option>
-            <option value="день">день</option>
-            <option value="все время">все время</option>
-        </select>
+        <div>За месяц (<b><span id="month"></span></b>) зарплата: <span id="slaryCount">0</span> BYN, время: <span
+                id="timeMonthCountHour">0</span> час <span id="timeMonthCountMinute">0</span> мин</div>
+        <hr>
+        <div>За период (<b><span id="period"></span></b>) зарплата: <span id="slaryPeriodCount">0</span> BYN, время:
+            <span id="timePeriodCountHour">0</span> час <span id="timePeriodCountMinute">0</span> мин
+        </div>
+        <hr>
+        <div>За день (<b><span id="day"></span></b>) зарплата: <span id="slaryDayCount">0</span> BYN, время: <span
+                id="timeDayCountHour">0</span> час <span id="timeDayCountMinute">0</span> мин</div>
+        <hr>
+        <div>Сеансов за <span id="countFilter"></span>: <span id="proceduresCount">0</span></div>
     </div>
-    <button id="addProcedure">Добавить сеанс</button>
+    <div class="main_buttons">
+        <div>
+            Показывать за:
+            <select name="filter" id="filter">
+                <option value="год">год</option>
+                <option value="месяц">месяц</option>
+                <option value="период">период</option>
+                <option value="день">день</option>
+                <option value="все время">все время</option>
+            </select>
+        </div>
+        <button id="addProcedure">Добавить сеанс</button>
 
-    <button id="changeCost">Изменить цены и процент</button>
+        <button id="changeCost">Изменить цены и процент</button>
+    </div>
 
     <div id="addingProcedureForm" class="disabled">
         <label for="procedure">Выбери процедуру:</label>
@@ -46,7 +54,7 @@
 
         <label for="isCource">Курс (-10% цена)</label>
         <input type="checkbox" id="isCource">
-        
+
         <button id="finishAdding">Подтвердить</button>
     </div>
 
@@ -59,11 +67,12 @@
         <br>
         <div class="disabled" style="border: solid 1px black;" id="popup">
             <p>Применить измененный процент к предыдущим сеансам?</p>
-            <button id="fullChange" >Да</button>
-            <button id="default" >Нет</button>
+            <button id="fullChange">Да</button>
+            <button id="default">Нет</button>
         </div>
         <br>
         <button id="clearMemory">Очистить Память</button>
+        <button id="showLog">Лог</button>
     </div>
 
     <div id="fulfilled">

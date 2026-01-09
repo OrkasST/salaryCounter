@@ -1,3 +1,4 @@
+import { DebugLog } from "./debugLog.js"
 import { Hasher } from "./Hash.js"
 import { procedureInitialList } from "./procedureInitialList.js"
 
@@ -42,56 +43,63 @@ export class Data {
 
 
     loadSavedData(data) {
-        let savedData = this.hasher.hash ?
-            this.hasher.parseHash() : JSON.parse(data)
 
-        if (!savedData.initialProcedureList) {
+        try {
 
-            this.salary = { ...savedData.salary }
-            this.procedures = [...savedData.procedures]
-            this.workingMinutes = {...savedData.workingMinutes}
+            let savedData = this.hasher.hash ?
+                this.hasher.parseHash() : JSON.parse(data)
 
-            if (savedData.procedureList) this._zipedData = [...savedData.procedureList]
-            else this._zipedData = [...procedureInitialList]
+            if (!savedData.initialProcedureList) {
 
-            this.save()
-            savedData = JSON.parse(localStorage.data)
-        }
+                this.salary = { ...savedData.salary }
+                this.procedures = [...savedData.procedures]
+                this.workingMinutes = { ...savedData.workingMinutes }
 
-        for (let i = 0; i < procedureInitialList.length; i++) {
+                if (savedData.procedureList) this._zipedData = [...savedData.procedureList]
+                else this._zipedData = [...procedureInitialList]
 
-            let ind = this._findMathing(procedureInitialList[i][0], savedData.initialProcedureList)
-
-            if (ind < 0) {
-                savedData.initialProcedureList.push(procedureInitialList[i])
-                savedData.procedureList.push(procedureInitialList[i])
-                continue;
+                this.save()
+                savedData = JSON.parse(localStorage.data)
             }
 
-            if (procedureInitialList[0][0]) {
-                savedData.procedureList[ind-1] = [...procedureInitialList[i]]
-                savedData.initialProcedureList[ind] = [...procedureInitialList[i]]
+            for (let i = 0; i < procedureInitialList.length; i++) {
 
-                continue
-            }
+                let ind = this._findMathing(procedureInitialList[i][0], savedData.initialProcedureList)
 
-            for (let j = 1; j < procedureInitialList[i].length; j++) {
-                if (!savedData.initialProcedureList[ind][j] || savedData.initialProcedureList[ind][j] !== procedureInitialList[i][j]) {
-                    savedData.procedureList[ind][j] = procedureInitialList[i][j]
-                    savedData.initialProcedureList[ind][j] = procedureInitialList[i][j]
+                if (ind < 0) {
+                    savedData.initialProcedureList.push(procedureInitialList[i])
+                    savedData.procedureList.push(procedureInitialList[i])
+                    continue;
+                }
+
+                if (procedureInitialList[0][0]) {
+                    savedData.procedureList[ind - 1] = [...procedureInitialList[i]]
+                    savedData.initialProcedureList[ind] = [...procedureInitialList[i]]
+
+                    continue
+                }
+
+                for (let j = 1; j < procedureInitialList[i].length; j++) {
+                    if (!savedData.initialProcedureList[ind][j] || savedData.initialProcedureList[ind][j] !== procedureInitialList[i][j]) {
+                        savedData.procedureList[ind][j] = procedureInitialList[i][j]
+                        savedData.initialProcedureList[ind][j] = procedureInitialList[i][j]
+                    }
                 }
             }
+
+            this._unzipProcedureList(savedData.procedureList)
+
+            this.procedures = [...savedData.procedures]
+            this.salary = { ...savedData.salary }
+            this.workingMinutes = { ...savedData.workingMinutes }
+
+            this.modifySalaryFor_01_09_2026_Update()
+
+            this.save()
+
+        } catch (error) {
+            DebugLog(error)
         }
-
-        this._unzipProcedureList(savedData.procedureList)
-
-        this.procedures = [...savedData.procedures]
-        this.salary = { ...savedData.salary }
-        this.workingMinutes = {...savedData.workingMinutes}
-
-        this.modifySalaryFor_01_09_2026_Update()
-
-        this.save()
     }
 
     _findMathing(id, list) {
@@ -145,14 +153,15 @@ export class Data {
     createPort() {
         let data = { salary: this.salary, procedures: this.procedures, procedureList: this._zipedData }
         data = JSON.stringify(data)
-        
+
         return "https://orkasst.github.io/salaryCounter/#" + this.hasher.toHash(data)
     }
 
 
     modifySalaryFor_01_09_2026_Update() {
+        throw new Error("kugsdvdsvksdbvk")
         for (let checkName in this.salary) {
-            if (this.salary.hasOwnProperty(checkName)){// && this.salary[checkName].length == 2) {
+            if (this.salary.hasOwnProperty(checkName)) {// && this.salary[checkName].length == 2) {
                 this.salary = {}
                 for (let i = 0; i < this.procedures.length; i++) {
                     if (!this.salary[this.procedures[i][0].month]) {
