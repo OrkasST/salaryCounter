@@ -1,8 +1,23 @@
 export class ProcedureCreator {
-    constructor(procedureListElement, addProcedureFormElement) {
+    constructor(procedureListElement, fulfilledProceduresElement, addProcedureFormElement, isCourceCheckbox, salaryMonthEl, salaryPeriodEl, salaryDayEl, timeMonthEl, timePeriodEl, timeDayEl ) {
         this._procedureListElement = procedureListElement
-        this._addProcedureFormElement = addProcedureFormElement
         this._groups = {}
+
+        this._fulfilledProceduresElement = fulfilledProceduresElement
+        this._addProcedureFormElement = addProcedureFormElement
+        this.isCourceCheckbox = isCourceCheckbox
+
+        this._salaryUI = {
+            month: salaryMonthEl,
+            period: salaryPeriodEl,
+            day: salaryDayEl
+        }
+
+        this._timeUI = {
+            month: timeMonthEl,
+            period: timePeriodEl,
+            day: timeDayEl
+        }
     }
 
     writeProcedureToList(groupName, name, id, writeToDataFnc) {
@@ -29,23 +44,20 @@ export class ProcedureCreator {
         }
     }
 
-
     addProcedureStart = () => {
         this._addProcedureFormElement.classList.remove("disabled")
     }
-    addProcedureFinish() {
-        this.addProcedure(this.procedureList.value)
-        this.procedureForm.classList.add("disabled")
-
-        this.data.save()
+    addProcedureFinish(writeTodataFnc) {
+        this.addProcedure(this.procedureList.value, writeTodataFnc)
+        this._addProcedureFormElement.classList.add("disabled")
 
         this.updateProcedureCountUI()
         this.updateSalaryUI(this.today.month)
 
         this.writeProcedure(this.data.procedures[this.data.procedures.length-1], this.data.procedures.length-1)
     }
-    addProcedure(procedure) {
-        let log = ''
+    addProcedure(procedure, writeTodataFnc) {
+        let log = {}
         let date = {
             year: this.today.year,
             month: this.today.month,
@@ -53,12 +65,13 @@ export class ProcedureCreator {
             full: this.today.date
         }
 
-        log += procedure + "_"
-        log += (this.isCourceCheckbox.checked ? (this.data._cost[procedure] * 0.9).toFixed(2) : this.data._cost[procedure]) + "_"
-        log += this.data.percents[procedure]*100 + "_"
-        log += this.countCost(procedure)
+        log.id = procedure
+        log.cost = (this.isCourceCheckbox.checked ? (this.data._cost[procedure] * 0.9).toFixed(2) : this.data._cost[procedure]) + "_"
+        log.percents = this.data.percents[procedure]*100 + "_"
+        log.income = this.countCost(procedure)
         
-        this.data.procedures.push([date, log])
+        // this.data.procedures.push([date, log])
+        writeTodataFnc(date, log)
 
         this.procedureCount++
         this.updateProcedureCountUI()
@@ -86,4 +99,12 @@ export class ProcedureCreator {
         let g = Math.round(this.data._cost[procedure] * (this.isCourceCheckbox.checked ? 0.9 : 1) * this.data.percents[procedure])
         return g
     }
+
+    writeProcedure(log, logInd) {
+        this.fulfilledProcedures.append(this.createProcedureField(log[0], this.parseLog(log), logInd))
+    }
 }
+
+// proc list
+// salary
+// time

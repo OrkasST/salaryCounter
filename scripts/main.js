@@ -62,7 +62,10 @@ class App {
         this.procedureCount = 0
 
         //utils
-        this.procedureCreator = new ProcedureCreator(this.procedureList, this.procedureForm)
+        this.procedureCreator = new ProcedureCreator(
+            this.procedureList, this.fulfilledProcedures, this.procedureForm,
+            this.isCourceCheckbox
+        )
         this.linkPopupHandler = new LinkPopupHandler(() => this.data.createPort())
     }
 
@@ -154,8 +157,14 @@ class App {
     }
 
     addProcedureStart() {
-        this.procedureForm.classList.remove("disabled")
+        // this.procedureForm.classList.remove("disabled")
+        this.procedureCreator.addProcedureStart()
     }
+    // addProcedureFinish() {
+    //     this.procedureCreator.addProcedureFinish()
+    //     this.data.save()
+    // TODO
+    // }
     addProcedureFinish() {
         this.addProcedure(this.procedureList.value)
         this.procedureForm.classList.add("disabled")
@@ -194,10 +203,10 @@ class App {
         let period = this.getPeriod(date ? date : this.today)
 
         if (!this.data.salary.hasOwnProperty(this.today.month) || (date && !this.data.salary.hasOwnProperty(date.month))) {
-            if (date) this.data.salary[date.month] = [0, 0]
-            else this.data.salary[this.today.month] = [0, 0]
+            if (date) this.data.salary[date.month] = [...new Array(31)].fill(0)
+            else this.data.salary[this.today.month] = [...new Array(31)].fill(0)
         }
-        this.data.salary[date?.month || this.today.month][period] += ammount || this.countCost(procedure)
+        this.data.salary[date?.month || this.today.month][date?.day || this.today.day] += ammount || this.countCost(procedure)
         
         this.writeTime(procedure, date || this.today, !!ammount)
     }
@@ -207,19 +216,16 @@ class App {
     }
 
     writeTime(procedure, date, isRemoved = false) {
-        console.log('isRemoved: ', isRemoved);
-        console.log('date: ', date);
-        console.log('procedure: ', procedure);
-        let period = this.getPeriod(date)
         if (!this.data.workingMinutes.hasOwnProperty(date.month)) {
-            this.data.workingMinutes[date.month] = [0, 0]
+            this.data.workingMinutes[date.month] = [...new Array(31)].fill(0)
         }
-        this.data.workingMinutes[date.month][period] += (isRemoved ? -1 : 1) * this.data.time[procedure]
+        this.data.workingMinutes[date.month][date.day] += (isRemoved ? -1 : 1) * this.data.time[procedure]
 
     }
     
     countCost(procedure) {
         let g = Math.round(this.data._cost[procedure] * (this.isCourceCheckbox.checked ? 0.9 : 1) * this.data.percents[procedure])
+        console.log('this.data._cost: ', this.data._cost);
         return g
     }
 
@@ -291,7 +297,7 @@ class App {
     updateSalaryPeriodUI() {
         let period = this.getPeriod(this.today)
         if (this.data.salary[this.today.month]) {
-            this.slaryPeriodCount.innerText = this.data.salary[this.today.month][period]
+            this.slaryPeriodCount.innerText = this.countSalary(this.today, period)
 
             let time = this.countHours(this.today.month, period)
             this.timePeriodCountHour.innerText = time[0]
@@ -300,6 +306,20 @@ class App {
         else {
             this.slaryPeriodCount.innerText = "0"
         }
+    }
+
+    countSalary(date, period = -1) {
+        let salary = 0
+        let end = period < 0 ? this.data.salary[date.month].length
+            : period > 0 ? this.data.salary[date.month].length
+            : 15
+        let start = period < 0 ? 0 : period * 15
+
+        for (let i = start; i < end; i++) {
+            salary += this.data.salary[date.month][i]
+        }
+
+        return salary
     }
 
     countHours(month, period) {
