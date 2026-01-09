@@ -160,7 +160,7 @@ export class Data {
 
     modifySalaryFor_01_09_2026_Update() {
         for (let checkName in this.salary) {
-            if (this.salary.hasOwnProperty(checkName)) {// && this.salary[checkName].length == 2) {
+            if (this.salary.hasOwnProperty(checkName) && this.salary[checkName].length == 2) {
                 this.salary = {}
                 for (let i = 0; i < this.procedures.length; i++) {
                     if (!this.salary[this.procedures[i][0].month]) {
