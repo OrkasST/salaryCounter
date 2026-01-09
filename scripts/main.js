@@ -30,21 +30,29 @@ class App {
 
         this.fulfilledProcedures = document.getElementById("fulfilled")
         this.calendar = document.getElementById("calendar")
+
         this.monthUI = document.getElementById("month")
+        this.periodUI = document.getElementById("period")
+        this.dayUI = document.getElementById("day")
 
-        this.slaryPeriod = document.getElementById("slaryPeriod")
-        this.timePeriod = document.getElementById("timePeriod")
+        this.salaryCounterUI = document.getElementById("slaryCount")
+        this.salaryPeriodCounterUI = document.getElementById("slaryPeriodCount")
+        this.salryDayCounterUI = document.getElementById("slaryDayCount")
 
-        this.slaryPeriodCount = document.getElementById("slaryPeriodCount")
+        this.timeMonthCountHour = document.getElementById("timeMonthCountHour")
+        this.timeMonthCountMinute = document.getElementById("timeMonthCountMinute")
+
         this.timePeriodCountHour = document.getElementById("timePeriodCountHour")
         this.timePeriodCountMinute = document.getElementById("timePeriodCountMinute")
+
+        this.timeDayCountHour = document.getElementById("timeDayCountHour")
+        this.timeDayCountMinute = document.getElementById("timeDayCountMinute")
 
         this.filter = document.getElementById("filter")
         this.countFilter = document.getElementById("countFilter")
 
         this.popup = document.getElementById("popup")
 
-        this.salaryCounterUI = document.getElementById("slaryCount")
         this.procedureCounterUI = document.getElementById("proceduresCount")
 
         this.createPortBtn = document.getElementById("createPortBtn")
@@ -90,10 +98,9 @@ class App {
             this.data.addProcedure.bind(this.data)
         )
 
-        this.updateMonthUI()
+        this.updateDateUI()
         this.updateProcedureCountUI()
-        this.updateSalaryUI(this.today.month)
-        this.updatePeriod()
+        this.updateSalaryUI(this.today)
         this.updateCountFilter()
 
         this.addProcedureBtn.addEventListener("click", this.addProcedureStart.bind(this))
@@ -121,10 +128,22 @@ class App {
     updateProcedureCountUI() {
         this.procedureCounterUI.innerText = this.procedureCount
     }
-    updateSalaryUI(month) {
-        this.salaryCounterUI.innerText = this.data.salary[month] ? this.data.salary[month][0] + this.data.salary[month][1] : "0"
+    updateSalaryUI(date) {
+        this.salaryCounterUI.innerText = this.data.salary[date.month] ? this.countSalary(date) : "0"
+
+        let monthTime = this.countHours(date)
+        this.timeMonthCountHour.innerText = monthTime[0]
+        this.timeMonthCountMinute.innerText = monthTime[1]
+
         this.updateSalaryPeriodUI()
+
+        this.salryDayCounterUI.innerText = this.data.salary[date.month] ? this.data.salary[date.month][date.day] : "0"
+        
+        let dayTime = this.countHours(date, -1, true)
+        this.timeDayCountHour.innerText = dayTime[0]
+        this.timeDayCountMinute.innerText = dayTime[1]
     }
+
     updateDate() {
         let date = this.calendar.value
         let parcedDate = this.calendar.value.split("-").map(el => parseInt(el, 10))
@@ -135,22 +154,19 @@ class App {
         this.today.year = parcedDate[0]
 
         this.showFulfilled()
-        this.updatePeriod()
-        this.updateSalaryUI(this.today.month)
-        this.updateMonthUI()
+        this.updateSalaryUI(this.today)
+        this.updateDateUI()
         this.updateProcedureCountUI()
-    }
-    updatePeriod() {
-        this.slaryPeriod.innerText = this.today.day > 15 ? "16-31" : "1-15"
-        this.timePeriod.innerText = this.today.day > 15 ? "16-31" : "1-15"
     }
     onFilterUpdate() {
         this.showFulfilled()
         this.updateCountFilter()
         this.updateProcedureCountUI()
     }
-    updateMonthUI() {
+    updateDateUI() {
         this.monthUI.innerText = this.today.month < 10 ? "0" + this.today.month : this.today.month
+        this.periodUI.innerText = this.today.day > 15 ? "16-31" : "1-15"
+        this.dayUI.innerText = this.today.day < 10 ? "0" + this.today.day : this.today.day
     }
     updateCountFilter() {
         countFilter.innerText = this.filter.value !== "все время" ? "текущий " + this.filter.value : this.filter.value
@@ -172,7 +188,7 @@ class App {
         this.data.save()
 
         this.updateProcedureCountUI()
-        this.updateSalaryUI(this.today.month)
+        this.updateSalaryUI(this.today)
 
         this.writeProcedure(this.data.procedures[this.data.procedures.length-1], this.data.procedures.length-1)
     }
@@ -203,8 +219,8 @@ class App {
         let period = this.getPeriod(date ? date : this.today)
 
         if (!this.data.salary.hasOwnProperty(this.today.month) || (date && !this.data.salary.hasOwnProperty(date.month))) {
-            if (date) this.data.salary[date.month] = [...new Array(31)].fill(0)
-            else this.data.salary[this.today.month] = [...new Array(31)].fill(0)
+            if (date) this.data.salary[date.month] = [...new Array(32)].fill(0)
+            else this.data.salary[this.today.month] = [...new Array(32)].fill(0)
         }
         this.data.salary[date?.month || this.today.month][date?.day || this.today.day] += ammount || this.countCost(procedure)
         
@@ -289,7 +305,7 @@ class App {
         let parsedLog = this.parseLog(log)
 
         this.addSalary(log[1].split("_")[0], log[0], -parsedLog.income)
-        this.updateSalaryUI(log[0].month)
+        this.updateSalaryUI(log[0])
 
         this.data.save()
     }
@@ -297,18 +313,20 @@ class App {
     updateSalaryPeriodUI() {
         let period = this.getPeriod(this.today)
         if (this.data.salary[this.today.month]) {
-            this.slaryPeriodCount.innerText = this.countSalary(this.today, period)
+            this.salaryPeriodCounterUI.innerText = this.countSalary(this.today, period)
 
-            let time = this.countHours(this.today.month, period)
+            let time = this.countHours(this.today, period)
             this.timePeriodCountHour.innerText = time[0]
             this.timePeriodCountMinute.innerText = time[1]
         }
         else {
-            this.slaryPeriodCount.innerText = "0"
+            this.salaryPeriodCounterUI.innerText = "0"
         }
     }
 
     countSalary(date, period = -1) {
+        if (!this.data.salary[date.month]) return 0
+
         let salary = 0
         let end = period < 0 ? this.data.salary[date.month].length
             : period > 0 ? this.data.salary[date.month].length
@@ -322,10 +340,26 @@ class App {
         return salary
     }
 
-    countHours(month, period) {
-        let minutes = this.data.workingMinutes[month][period]
+    countHours(date, period = -1, isPerDay = false) {
+        if (!this.data.workingMinutes[date.month]) return [0, 0]
+        
+        let minutes = 0
+
+        if (!isPerDay) {
+            let end = period < 0 ? this.data.workingMinutes[date.month].length
+                : period > 0 ? this.data.workingMinutes[date.month].length
+                : 15
+            let start = period < 0 ? 0 : period * 15
+
+            for (let i = start; i < end; i++) {
+                minutes += this.data.workingMinutes[date.month][i]
+            }
+        } else minutes = this.data.workingMinutes[date.month][date.day]
+
         let hours = Math.floor(minutes / 60)
+        console.log('hours: ', hours);
         minutes = minutes - hours * 60
+        console.log('minutes: ', minutes);
         return [hours, minutes]
     }
 
@@ -507,9 +541,8 @@ class App {
         this.data.save()
 
         this.showFulfilled()
-        this.updatePeriod()
-        this.updateSalaryUI(this.today.month)
-        this.updateMonthUI()
+        this.updateSalaryUI(this.today)
+        this.updateDateUI()
         this.updateProcedureCountUI()
     }
 
@@ -542,18 +575,17 @@ class App {
     }
 
     checkUpdates() {
-        console.log("Checking updates...");
         if (!Object.keys(this.data.workingMinutes).length) {
-            console.log(this.data.procedures)
+            // console.log(this.data.procedures)
             for (let i = 0; i < this.data.procedures.length; i++) {
-                console.log('this.data.procedures.length: ', this.data.procedures.length);
+                // console.log('this.data.procedures.length: ', this.data.procedures.length);
                 let procedureId = this.parseLog(this.data.procedures[i]).procedure
-                console.log('procedureId: ', procedureId);
+                // console.log('procedureId: ', procedureId);
                 let procedureDate = this.data.procedures[i][0]
 
                 this.writeTime(procedureId, procedureDate)
             }
-            console.log(this.data.workingMinutes);
+            // console.log(this.data.workingMinutes);
         }
     }
 }
