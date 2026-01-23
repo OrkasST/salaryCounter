@@ -45,6 +45,8 @@ export class Data {
     loadSavedData(data) {
         try {
 
+            console.log(procedureInitialList);
+
             let savedData = this.hasher.hash ?
                 this.hasher.parseHash() : JSON.parse(data)
 
